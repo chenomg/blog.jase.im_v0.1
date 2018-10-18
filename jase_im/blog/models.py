@@ -5,12 +5,13 @@ from django.template.defaultfilters import slugify
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
+    created_time = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-    def __repr__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -20,19 +21,20 @@ class Category(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=30, unique=True)
     slug = models.SlugField(unique=True)
+    created_time = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-    def __repr__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
         verbose_name_plural = 'tags'
 
 
-class Page(models.Model):
+class Post(models.Model):
     title = models.CharField(max_length=128)
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
@@ -40,16 +42,17 @@ class Page(models.Model):
     category = models.ForeignKey(Category)
     tag = models.ManyToManyField(Tag)
     title_slug = models.SlugField()
+    views = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
         self.title_slug = slugify(self.title)
         super().save(*args, **kwargs)
 
-    def __repr__(self):
+    def __str__(self):
         return self.title
 
     class Meta:
-        verbose_name_plural = 'pages'
+        verbose_name_plural = 'posts'
 
 
 class Archive(models.Model):
