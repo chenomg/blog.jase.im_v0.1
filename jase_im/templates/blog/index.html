@@ -3,10 +3,11 @@
 {% block body_block %}
     <div>
         {% if posts %}
-        <ul class="list-group">
+        <ul>
             {% for post in posts %}
                 <h5>{{ post.title }}</h5>
                 <p>{{ post.content }}</p>
+                <hr>
             {% endfor %}
         </ul>
         {% else %}
