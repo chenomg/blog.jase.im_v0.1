@@ -1,0 +1,43 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% block body_block %}
+    <div class="jumbotron">
+        <h1 class="display-3">Rango says...</h1>
+        {% if user.is_authenticated %}
+            <h1>Hey {{ user.username }}</h1>
+        {% else %}
+            <h1>Hey there parter.</h1>
+        {% endif %}
+    </div>
+    <div class="row marketing">
+        <div class="col-lg-6">
+            <p><h2>Most Liked 5 Categories</h2></p>
+            {% if categories %}
+            <ul class="list-group">
+                {% for category in categories %}
+                <li class="list-group-item">
+                    <a href="{% url 'rango:show_category' category.slug %}" target="_self">{{ category.name }}</a>@{{ category.likes }}likes
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <strong>There are no categories present.</strong>
+            {% endif %}
+        </div>
+        <div class="col-lg-6">
+            <p><h2>Most Viewed 5 Pages</h2></p>
+            {% if pages %}
+            <ul class="list-group">
+                {% for page in pages %}
+                <li class="list-group-item">
+                    <a href="{% url 'rango:track_url' page.id %}" target="_blank">{{ page.title }}</a>@{{ page.views }}views
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <strong>There are no page!!</strong>
+            {% endif %}
+        </div>
+    </div>
+    <br \>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% block body_block %}
+    <div>
+        {% if posts %}
+        <ul class="list-group">
+            {% for post in posts %}
+                <h5>{{ post.title }}</h5>
+                <p>{{ post.content }}</p>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <strong>There are no post present.</strong>
+        {% endif %}
+    </div>
+{% endblock %}
