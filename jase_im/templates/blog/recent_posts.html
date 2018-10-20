@@ -1,0 +1,11 @@
+<ul>
+  {% if recent_posts %}
+    {% for post in recent_posts %}
+      <li>
+        {{ post.title }}
+      </li>
+    {% endfor %}
+  {% else %}
+    <li>No post</li>
+  {% endif %}
+</ul>

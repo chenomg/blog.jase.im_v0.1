@@ -1,0 +1,11 @@
+<ul>
+  {% if most_viewed_posts %}
+    {% for post in most_viewed_posts %}
+      <li>
+        {{ post.title }}
+      </li>
+    {% endfor %}
+  {% else %}
+    <li>No post</li>
+  {% endif %}
+</ul>

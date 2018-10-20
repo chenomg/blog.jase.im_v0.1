@@ -40,7 +40,7 @@ class Post(models.Model):
     modified_time = models.DateTimeField(auto_now=True)
     content = models.TextField(blank=True)
     category = models.ForeignKey(Category)
-    tag = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag)
     title_slug = models.SlugField()
     views = models.PositiveIntegerField(default=0)
 
