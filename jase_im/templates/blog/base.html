@@ -56,50 +56,56 @@
             <div id="content-posts" class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
                 {% block body_block %}
                 {% endblock %}
+                {% if page_current == '1' %}
+                <div id='page_indicator'>
+                    第{{ page_current }}页 <a href="{% url 'blog:index' %}?page=2">下一页</a>
+                </div>
+                {% elif page_current == pages_total %}
+                {% else %}
+                <div id='page_indicator'>
+                    <button>上一页</button>第{{ page_current }}页<button>下一页</button>
+                </div>
+                {% endif %}
             </div>
             <div id='sidebar' class="col-sm-3 col-md-3 sidebar">
-                <div class="container-fluid">
-                    <ul class="nav nav-list">
-                        <form>
-                            <label>搜索</label>
-                            <li>
-                                <input class="search-query span10" type="text" value="" name="search" id="search" placeholder="search"/>
-                            </li>
-                        </form>
+                <ul>
+                    <form>
+                        <label>搜索</label>
                         <li>
-                            <h5>Slogan:</h5>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;人生苦短, 我用Python</p>
+                            <input class="search-query span10" type="text" value="" name="search" id="search" placeholder="search"/>
                         </li>
-                        <br />
-                        <li>
-                            <h5>Most viewed:</h5>
-                            {% block most_viewed_posts %}
-                                {% most_viewed_posts %}
-                            {% endblock %}
-                        </li>
-                        <br />
-                        <li>
-                            <h5>Recent Posts:</h5>
-                            {% block recent_posts %}
-                                {% recent_posts %}
-                            {% endblock %}
-                        </li>
-                        <br />
-                        <li>
-                            <h5>Categoy:</h5>
-                            {% block current_category %}
-                                {% show_current_categories posts %}
-                            {% endblock %}
-                        </li>
-                        <br />
-                        <li>
-                            <h5>Tag:</h5>
-                            {% block current_tag %}
-                                {% show_current_tags posts %}
-                            {% endblock %}
-                        </li>
-                    </ul>
-                </div>
+                    </form>
+                    <li>
+                        <h5>Slogan:</h5>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;人生苦短, 我用Python</p>
+                    </li>
+                    <br />
+                    <li>
+                        <h5>Most viewed:</h5>
+                        {% block most_viewed_posts %}
+                            {% most_viewed_posts %}
+                        {% endblock %}
+                    </li>
+                    <br />
+                    <li>
+                        <h5>Recent Posts:</h5>
+                        {% block recent_posts %}
+                            {% recent_posts %}
+                        {% endblock %}
+                    </li>
+                    <br />
+                    <li>
+                        <h5>Categoy:</h5>
+                        {% block category %}
+                        {% endblock %}
+                    </li>
+                    <br />
+                    <li>
+                        <h5>Tag:</h5>
+                        {% block tag %}
+                        {% endblock %}
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

@@ -7,22 +7,20 @@ register = template.Library()
 
 
 @register.inclusion_tag('blog/show_current_categories.html')
-def show_current_categories(posts):
-    categories = None
-    if len(posts) == 1:
-        categories = posts.categroy
-    elif len(posts) > 1:
+def show_current_categories(is_detail, post=None):
+    if is_detail:
+        categories = post.category
+    else:
         categories = Category.objects.all()
-    return {'categories': categories}
+    return {'categories': categories, 'is_detail': is_detail}
 
 
 @register.inclusion_tag('blog/show_current_tags.html')
-def show_current_tags(posts):
-    tags = None
-    if len(posts) > 1:
+def show_current_tags(is_detail, post=None):
+    if is_detail:
+        tags = post.tags.all()
+    else:
         tags = Tag.objects.all()
-    elif len(posts) == 1:
-        tags = posts.tags.all()
     return {'tags': tags}
 
 

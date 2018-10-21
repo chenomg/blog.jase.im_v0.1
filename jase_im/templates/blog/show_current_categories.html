@@ -1,7 +1,17 @@
 <ul>
-  {% for cat in categories %}
-  <li>
-    {{ cat.name }}
-  </li>
-  {% endfor %}
+  {% if is_detail %}
+    <li>
+      {{ categories.name }}
+    </li>
+  {% else %}
+    {% if categories %}
+      {% for cat in categories %}
+      <li>
+        {{ cat.name }}
+      </li>
+      {% endfor %}
+    {% else %}
+      <li>No category</li>
+    {% endif %}
+  {% endif %}
 </ul>

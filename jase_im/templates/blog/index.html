@@ -1,11 +1,14 @@
 {% extends 'blog/base.html' %}
 {% load staticfiles %}
+{% load blog_template_tags %}
 {% block body_block %}
     <div>
         {% if posts %}
         <ul>
             {% for post in posts %}
-                <h5>{{ post.title }}</h5>
+            <h5>
+                <a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a>
+            </h5>
                 <p>{{ post.content }}</p>
                 <hr>
             {% endfor %}
@@ -14,4 +17,10 @@
             <strong>There are no post present.</strong>
         {% endif %}
     </div>
+{% endblock %}
+{% block tag %}
+    {% show_current_tags detail %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories detail %}
 {% endblock %}

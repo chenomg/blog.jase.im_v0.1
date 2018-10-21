@@ -1,0 +1,19 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load blog_template_tags %}
+{% block body_block %}
+    <div>
+        {% if post %}
+          <h5>{{ post.title }}</h5>
+          <p>{{ post.content }}</p>
+        {% else %}
+          There is no such post.
+        {% endif %}
+    </div>
+{% endblock %}
+{% block tag %}
+    {% show_current_tags is_detail post %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories is_detail post %}
+{% endblock %}
