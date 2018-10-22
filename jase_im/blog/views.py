@@ -35,3 +35,10 @@ def post_detail(request, post_title_slug):
     print(post)
     context = {'post': post, 'is_detail': True}
     return render(request, 'blog/post_detail.html', context=context)
+
+
+def category(request):
+    categories = Category.objects.all().order_by('-name')
+    posts = Post.objects.all()
+    context = {'categories': categories, 'posts': posts, 'is_detail': False}
+    return render(request, 'blog/category.html', context=context)

@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^about/', views.about, name='about'),
     url(r'^post/(?P<post_title_slug>.+)/$', views.post_detail, name='post_detail'),
+    url(r'^category/', views.category, name='category'),
 ]
