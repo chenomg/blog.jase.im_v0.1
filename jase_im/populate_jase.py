@@ -138,7 +138,7 @@ def add_post(cat, title, content, views=0, tags=None):
     if tags:
         for t in tags:
             tt = Tag.objects.get_or_create(name=t)
-            p.tag.add(tt[0])
+            p.tags.add(tt[0])
     p.save()
     return p
 

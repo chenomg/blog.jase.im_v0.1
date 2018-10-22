@@ -3,18 +3,40 @@
 {% load blog_template_tags %}
 {% block body_block %}
     <div>
-        {% if posts %}
-        <ul>
-            {% for post in posts %}
-            <h5>
-                <a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a>
-            </h5>
-                <p>{{ post.content }}</p>
-                <hr>
+        <h3>文章分类</h3>
+        {% if categories %}
+        <ul id='categories'>
+            {% for category in categories %}
+            <li>
+                <h4>
+                    <a href="{% url 'blog:category'  %}" >&nbsp{{ category.name }}&nbsp</a>
+                </h4>
+            </li>
             {% endfor %}
         </ul>
         {% else %}
-            <strong>There are no post present.</strong>
+            <strong>There are no Categories present.</strong>
+        {% endif %}
+    </div>
+    <div>
+        <h3>分类详情</h3>
+        {% if categories %}
+            {% for category in categories %}
+            <ul>
+                <h4>{{ category.name }}</h4>
+                <ul>
+                    {% for post in posts %}
+                        {% if post.category == category %}
+                            <h5>
+                                <a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a>
+                            </h5>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </ul>
+            {% endfor %}
+        {% else %}
+            <strong>There are no posts and categories present.</strong>
         {% endif %}
     </div>
 {% endblock %}

@@ -7,3 +7,10 @@
 #page_indicator {
   text-align: center;
 }
+#categories {
+  margin-left: -20px;
+}
+#categories li {
+  list-style: none;
+  display: inline-block;
+}
