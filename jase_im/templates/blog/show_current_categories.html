@@ -7,7 +7,7 @@
     {% if categories %}
       {% for cat in categories %}
       <li>
-        {{ cat.name }}
+        <a href="{% url 'blog:category' %}">{{ cat.name }}</a>
       </li>
       {% endfor %}
     {% else %}
