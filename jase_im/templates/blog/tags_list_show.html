@@ -1,0 +1,27 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load blog_template_tags %}
+{% block body_block %}
+    <div>
+        <h3>标签</h3>
+        {% if tags %}
+        <ul id='tags'>
+            {% for tag in tags %}
+            <li>
+                <h4>
+                    <a href="{% url 'blog:tag_show' tag.slug %}" >&nbsp{{ tag.name }}&nbsp</a>
+                </h4>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <strong>There are no tags present.</strong>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block tag %}
+    {% show_current_tags is_detail %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories is_detail %}
+{% endblock %}

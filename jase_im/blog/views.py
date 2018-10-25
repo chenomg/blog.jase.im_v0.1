@@ -42,3 +42,26 @@ def category(request):
     posts = Post.objects.all()
     context = {'categories': categories, 'posts': posts, 'is_detail': False}
     return render(request, 'blog/category.html', context=context)
+
+
+def tag_list_show(request):
+    tags = Tag.objects.all().order_by('slug')
+    context = {'tags': tags, 'is_detail': False}
+    return render(request, 'blog/tags_list_show.html', context=context)
+
+
+def tag_show(request, tag_slug):
+    try:
+        tag = Tag.objects.get(slug=tag_slug)
+        posts = Tag.objects.get(slug=tag_slug).post_set.all()
+    except Exception as e:
+        print(e)
+        tag = False
+        posts = None
+    context = {
+        'tag': tag,
+        'tag_slug': tag_slug,
+        'is_detail': False,
+        'posts': posts
+    }
+    return render(request, 'blog/tag_show.html', context=context)

@@ -1,0 +1,24 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load blog_template_tags %}
+{% block body_block %}
+    <div>
+        {% if tag %}
+        <h3>Posts with tag: <strong>{{ tag.name }}</strong></h3>
+            <ul>
+                {% for post in posts %}
+                    <h4><a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a></h4>
+                    <p>{{ post.content }}</p>
+                {% endfor %}
+            </ul>
+        {% else %}
+            There are no posts for tag: <strong>{{ tag_slug }}</strong>.
+        {% endif %}
+    </div>
+{% endblock %}
+{% block tag %}
+    {% show_current_tags is_detail %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories is_detail %}
+{% endblock %}
