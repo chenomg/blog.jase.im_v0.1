@@ -10,6 +10,22 @@
           There is no such post.
         {% endif %}
     </div>
+    <form action="post_comment_submit" method="post" accept-charset="utf-8">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-12">
+                <label for="id_name">标题：</label>
+                <input type="text" value="" name="" id="title_input"/>
+            </div>
+            <div class="col-md-12">
+                <label for="id_email">内容：</label>
+                <input type="text" value="" name="" id="comment_input"/>
+            </div>
+            <div class="col-md-12">
+                <input type="submit" value="提交评论" name="" id="comment_submit"/>
+            </div>
+        </div>    <!-- row -->
+    </form>
 {% endblock %}
 {% block tag %}
     {% show_current_tags is_detail post %}

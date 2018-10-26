@@ -6,11 +6,23 @@ from blog.models import Category, Tag, Post, Archive
 
 def index(request):
     posts = Post.objects.all().order_by('-modified_time')
-    posts_per_page = 7
+    posts_per_page = 1
     paginator = Paginator(posts, posts_per_page)
     pages_count = paginator.num_pages
-    page_id = request.GET.get('page', '1')
-    if int(page_id) > pages_count:
+    page_id = int(request.GET.get('page', '1'))
+    page_previous_id = 1
+    page_next_id = pages_count
+    if page_id == 1:
+        page_previous = False
+    else:
+        page_previous = True
+        page_previous_id = page_id - 1
+    if page_id == pages_count:
+        page_next = False
+    else:
+        page_next = True
+        page_next_id = page_id + 1
+    if page_id > pages_count:
         page_id = pages_count
     selected_page = paginator.page(page_id)
     context_dic = {
@@ -18,6 +30,10 @@ def index(request):
         'is_detail': False,
         'pages_total': pages_count,
         'page_current': page_id,
+        'page_previous': page_previous,
+        'page_previous_id': page_previous_id,
+        'page_next': page_next,
+        'page_next_id': page_next_id,
     }
     return render(request, 'blog/index.html', context=context_dic)
 
