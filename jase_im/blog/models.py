@@ -57,3 +57,18 @@ class Post(models.Model):
 
 class Archive(models.Model):
     pass
+
+
+class Comment(models.Model):
+    title = models.CharField(max_length=128)
+    created_time = models.DateTimeField(auto_now_add=True)
+    content = models.TextField(blank=True)
+    post = models.ForeignKey(Post)
+    title_slug = models.SlugField()
+
+    def save(self, *args, **kwargs):
+        self.title_slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title

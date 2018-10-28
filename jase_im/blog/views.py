@@ -1,12 +1,13 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
-from django.http import HttpResponse
-from blog.models import Category, Tag, Post, Archive
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from blog.models import Category, Tag, Post, Archive, Comment
 
 
 def index(request):
     posts = Post.objects.all().order_by('-modified_time')
-    posts_per_page = 1
+    posts_per_page = 3
     paginator = Paginator(posts, posts_per_page)
     pages_count = paginator.num_pages
     page_id = int(request.GET.get('page', '1'))
@@ -46,10 +47,11 @@ def about(request):
 def post_detail(request, post_title_slug):
     try:
         post = Post.objects.get(title_slug=post_title_slug)
+        comments = Post.objects.get(title_slug=post_title_slug).comment_set.all()
     except Exception:
-        post = None
+        return HttpResponseRedirect(reverse('blog:index'))
     print(post)
-    context = {'post': post, 'is_detail': True}
+    context = {'post': post, 'comments': comments, 'is_detail': True}
     return render(request, 'blog/post_detail.html', context=context)
 
 
@@ -81,3 +83,14 @@ def tag_show(request, tag_slug):
         'posts': posts
     }
     return render(request, 'blog/tag_show.html', context=context)
+
+
+def comment_submit(request, post_id):
+    if request.method == 'POST':
+        post = Post.objects.get(id=post_id)
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        comment = Comment.objects.create(
+            title=title, content=content, post=post)
+        return HttpResponseRedirect(reverse('blog:post_detail', args=[post.title_slug]))
+    return HttpResponse('请检查表单提交.')

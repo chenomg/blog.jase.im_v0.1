@@ -10,22 +10,37 @@
           There is no such post.
         {% endif %}
     </div>
-    <form action="post_comment_submit" method="post" accept-charset="utf-8">
+    <form action="{% url 'blog:comment_submit' post.id %}" method="post" id='comment_submit' accept-charset="utf-8">
         {% csrf_token %}
         <div class="row">
             <div class="col-md-12">
                 <label for="id_name">标题：</label>
-                <input type="text" value="" name="" id="title_input"/>
+                <input type="text" value="" name="title" id="title_input"/>
             </div>
             <div class="col-md-12">
                 <label for="id_email">内容：</label>
-                <input type="text" value="" name="" id="comment_input"/>
+                <input type="text" value="" name="content" id="comment_input"/>
             </div>
             <div class="col-md-12">
                 <input type="submit" value="提交评论" name="" id="comment_submit"/>
             </div>
         </div>    <!-- row -->
     </form>
+    <br>
+    <div id='comments_show'>
+        <h3>评论:</h3>
+        {% if comments %}
+            {% for comment in comments %}
+                <h7>标题:</h7>
+                <h5>{{ comment.title }}</h5>
+                <h7>评论内容:</h7>
+                <p>{{ comment.content }}</p>
+                <hr>
+            {% endfor %}
+        {% else %}
+            <strong>There is no comment for this post.</strong>
+        {% endif %}
+    </div>
 {% endblock %}
 {% block tag %}
     {% show_current_tags is_detail post %}
