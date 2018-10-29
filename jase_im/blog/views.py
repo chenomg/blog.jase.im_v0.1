@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from blog.models import Category, Tag, Post, Archive, Comment
+from .forms import CommentForm
 
 
 def index(request):
@@ -47,7 +48,8 @@ def about(request):
 def post_detail(request, post_title_slug):
     try:
         post = Post.objects.get(title_slug=post_title_slug)
-        comments = Post.objects.get(title_slug=post_title_slug).comment_set.all()
+        comments = Post.objects.get(
+            title_slug=post_title_slug).comment_set.all()
     except Exception:
         return HttpResponseRedirect(reverse('blog:index'))
     print(post)
@@ -90,7 +92,9 @@ def comment_submit(request, post_id):
         post = Post.objects.get(id=post_id)
         title = request.POST.get('title')
         content = request.POST.get('content')
-        comment = Comment.objects.create(
-            title=title, content=content, post=post)
-        return HttpResponseRedirect(reverse('blog:post_detail', args=[post.title_slug]))
+        if title or content:
+            comment = Comment.objects.create(
+                title=title, content=content, post=post)
+        return HttpResponseRedirect(
+            reverse('blog:post_detail', args=[post.title_slug]))
     return HttpResponse('请检查表单提交.')
