@@ -12,14 +12,17 @@
     </div>
     <form action="{% url 'blog:comment_submit' post.id %}" method="post" id='comment_submit' accept-charset="utf-8">
         {% csrf_token %}
+        {{ form.non_field_errors }}
         <div class="row">
             <div class="col-md-12">
-                <label for="id_name">标题：</label>
-                <input type="text" value="" name="title" id="title_input"/>
+                {{ form.title.errors }}
+                <label for="{{ form.title.id_for_label }}">标题：</label>
+                {{ form.title }}
             </div>
             <div class="col-md-12">
-                <label for="id_email">内容：</label>
-                <input type="text" value="" name="content" id="comment_input"/>
+                {{ form.content.errors }}
+                <label for="{{ form.comment.id_for_label }}">内容：</label>
+                {{ form.content }}
             </div>
             <div class="col-md-12">
                 <input type="submit" value="提交评论" name="" id="comment_submit"/>

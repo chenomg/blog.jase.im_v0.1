@@ -52,8 +52,8 @@ def post_detail(request, post_title_slug):
             title_slug=post_title_slug).comment_set.all()
     except Exception:
         return HttpResponseRedirect(reverse('blog:index'))
-    print(post)
-    context = {'post': post, 'comments': comments, 'is_detail': True}
+    form = CommentForm()
+    context = {'post': post, 'comments': comments, 'form': form, 'is_detail': True}
     return render(request, 'blog/post_detail.html', context=context)
 
 

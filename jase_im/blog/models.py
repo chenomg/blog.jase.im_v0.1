@@ -65,9 +65,5 @@ class Comment(models.Model):
     content = models.TextField(blank=True)
     post = models.ForeignKey(Post)
 
-    def save(self, *args, **kwargs):
-        self.title_slug = slugify(self.title)
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return self.title
