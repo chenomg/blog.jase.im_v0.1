@@ -64,7 +64,6 @@ class Comment(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
     content = models.TextField(blank=True)
     post = models.ForeignKey(Post)
-    title_slug = models.SlugField()
 
     def save(self, *args, **kwargs):
         self.title_slug = slugify(self.title)

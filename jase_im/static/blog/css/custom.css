@@ -10,7 +10,7 @@
 #categories {
   margin-left: -20px;
 }
-#categories li {
-  list-style: none;
+.categories-show li {
+  list-style-type: none;
   display: inline-block;
 }

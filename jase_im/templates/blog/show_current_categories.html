@@ -6,7 +6,7 @@
   {% else %}
     {% if categories %}
       {% for cat in categories %}
-      <li>
+      <li class='categories-show'>
         <a href="{% url 'blog:category' %}">{{ cat.name }}</a>
       </li>
       {% endfor %}
