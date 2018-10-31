@@ -1,7 +1,7 @@
 <ul>
   {% if is_detail %}
     <li>
-      {{ categories.name }}
+        <a href="{% url 'blog:category' %}">{{ categories.name }}</a>
     </li>
   {% else %}
     {% if categories %}

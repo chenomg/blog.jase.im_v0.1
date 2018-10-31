@@ -7,7 +7,7 @@ register = template.Library()
 
 
 @register.inclusion_tag('blog/show_current_categories.html')
-def show_current_categories(is_detail, post=None):
+def show_current_categories(is_detail=False, post=None):
     if is_detail:
         categories = post.category
     else:

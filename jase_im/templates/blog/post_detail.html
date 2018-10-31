@@ -10,33 +10,11 @@
           There is no such post.
         {% endif %}
     </div>
-    <form action="{% url 'blog:comment_submit' post.id %}" method="post" id='comment_submit' accept-charset="utf-8">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="row">
-            <div class="col-md-12">
-                {{ form.title.errors }}
-                <label for="{{ form.title.id_for_label }}">标题：</label>
-                {{ form.title }}
-            </div>
-            <div class="col-md-12">
-                {{ form.content.errors }}
-                <label for="{{ form.comment.id_for_label }}">内容：</label>
-                {{ form.content }}
-            </div>
-            <div class="col-md-12">
-                <input type="submit" value="提交评论" name="" id="comment_submit"/>
-            </div>
-        </div>    <!-- row -->
-    </form>
-    <br>
     <div id='comments_show'>
         <h3>评论:</h3>
         {% if comments %}
             {% for comment in comments %}
-                <h7>标题:</h7>
-                <h5>{{ comment.title }}</h5>
-                <h7>评论内容:</h7>
+            <h7><strong>{{ comment.name }}</strong> 说 (于{{ comment.created_time }}):</h7>
                 <p>{{ comment.content }}</p>
                 <hr>
             {% endfor %}
@@ -44,6 +22,32 @@
             <strong>There is no comment for this post.</strong>
         {% endif %}
     </div>
+    <br>
+    <form action="{% url 'blog:post_detail' post.title_slug %}" method="post" id='comment_submit' accept-charset="utf-8">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.name.errors }}
+                <label for="{{ form.name.id_for_label }}">用户名：</label>
+                {{ form.name }}
+            </div>
+            <div class="col-md-4">
+                {{ form.email.errors }}
+                <label for="{{ form.email.id_for_label }}">E-mail：</label>
+                {{ form.email }}
+            </div>
+            <div class="col-md-6">
+                {{ form.content.errors }}
+                <label for="{{ form.comment.id_for_label }}">内容：</label>
+                <br>
+                {{ form.content }}
+            </div>
+            <div class="col-md-12">
+                <input type="submit" value="提交评论" name="" id="comment_submit"/>
+            </div>
+        </div>    <!-- row -->
+    </form>
 {% endblock %}
 {% block tag %}
     {% show_current_tags is_detail post %}

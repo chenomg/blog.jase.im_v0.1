@@ -22,7 +22,6 @@ urlpatterns = [
     url(r'^about/', views.about, name='about'),
     url(r'^tags/', views.tag_list_show, name='tag_list_show'),
     url(r'^tag/(?P<tag_slug>.+)/', views.tag_show, name='tag_show'),
-    url(r'^comment_submit/(?P<post_id>.+)/', views.comment_submit, name='comment_submit'),
     url(r'^post/(?P<post_title_slug>.+)/$', views.post_detail, name='post_detail'),
     url(r'^category/', views.category, name='category'),
 ]

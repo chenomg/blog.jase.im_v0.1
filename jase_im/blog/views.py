@@ -29,7 +29,6 @@ def index(request):
     selected_page = paginator.page(page_id)
     context_dic = {
         'posts': selected_page,
-        'is_detail': False,
         'pages_total': pages_count,
         'page_current': page_id,
         'page_previous': page_previous,
@@ -52,21 +51,37 @@ def post_detail(request, post_title_slug):
             title_slug=post_title_slug).comment_set.all()
     except Exception:
         return HttpResponseRedirect(reverse('blog:index'))
-    form = CommentForm()
-    context = {'post': post, 'comments': comments, 'form': form, 'is_detail': True}
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            content = form.cleaned_data['content']
+            comment = Comment.objects.create(
+                name=name, content=content, email=email, post=post)
+        return HttpResponseRedirect(
+            reverse('blog:post_detail', args=[post.title_slug]))
+    else:
+        form = CommentForm()
+    context = {
+        'post': post,
+        'comments': comments,
+        'form': form,
+        'is_detail': True
+    }
     return render(request, 'blog/post_detail.html', context=context)
 
 
 def category(request):
     categories = Category.objects.all().order_by('-name')
     posts = Post.objects.all()
-    context = {'categories': categories, 'posts': posts, 'is_detail': False}
+    context = {'categories': categories, 'posts': posts}
     return render(request, 'blog/category.html', context=context)
 
 
 def tag_list_show(request):
     tags = Tag.objects.all().order_by('slug')
-    context = {'tags': tags, 'is_detail': False}
+    context = {'tags': tags}
     return render(request, 'blog/tags_list_show.html', context=context)
 
 
@@ -81,20 +96,6 @@ def tag_show(request, tag_slug):
     context = {
         'tag': tag,
         'tag_slug': tag_slug,
-        'is_detail': False,
         'posts': posts
     }
     return render(request, 'blog/tag_show.html', context=context)
-
-
-def comment_submit(request, post_id):
-    if request.method == 'POST':
-        post = Post.objects.get(id=post_id)
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        if title or content:
-            comment = Comment.objects.create(
-                title=title, content=content, post=post)
-        return HttpResponseRedirect(
-            reverse('blog:post_detail', args=[post.title_slug]))
-    return HttpResponse('请检查表单提交.')

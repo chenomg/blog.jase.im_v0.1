@@ -60,9 +60,10 @@ class Archive(models.Model):
 
 
 class Comment(models.Model):
-    title = models.CharField(max_length=128)
+    name = models.CharField(max_length=30)
+    email = models.EmailField()
     created_time = models.DateTimeField(auto_now_add=True)
-    content = models.TextField(blank=True)
+    content = models.TextField()
     post = models.ForeignKey(Post)
 
     def __str__(self):
