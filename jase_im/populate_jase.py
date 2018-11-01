@@ -13,6 +13,19 @@ def populate():
     python_posts = [
         {
             'title':
+            '中文标题测试Learning Python: From Zero to Hero',
+            'content':
+            """
+中文测试First of all, what is Python? According to its creator, Guido van Rossum, Python is a:
+
+“high-level programming language, and its core design philosophy is all about code readability and a syntax which allows programmers to express concepts in a few lines of code.”
+            """,
+            'views':
+            12,
+            'tags': ['program', 'computer'],
+        },
+        {
+            'title':
             'Learning Python: From Zero to Hero',
             'content':
             """
