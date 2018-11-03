@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^tag/(?P<tag_slug>.+)/', views.tag_show, name='tag_show'),
     url(r'^post/(?P<post_title_slug>.+)/$', views.post_detail, name='post_detail'),
     url(r'^category/', views.category, name='category'),
+    url(r'^archive/', views.archive, name='archive'),
 ]

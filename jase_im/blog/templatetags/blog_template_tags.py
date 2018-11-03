@@ -16,7 +16,7 @@ def show_current_categories(is_detail=False, post=None):
 
 
 @register.inclusion_tag('blog/show_current_tags.html')
-def show_current_tags(is_detail, post=None):
+def show_current_tags(is_detail=False, post=None):
     if is_detail:
         tags = post.tags.all()
     else:

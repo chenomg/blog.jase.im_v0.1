@@ -1,9 +1,10 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from blog.models import Category, Tag, Post, Archive, Comment
 from .forms import CommentForm
+import datetime
 
 
 def index(request):
@@ -45,12 +46,9 @@ def about(request):
 
 
 def post_detail(request, post_title_slug):
-    try:
-        post = Post.objects.get(title_slug=post_title_slug)
-        comments = Post.objects.get(
-            title_slug=post_title_slug).comment_set.all()
-    except Exception:
-        return HttpResponseRedirect(reverse('blog:index'))
+    post = get_object_or_404(Post, title_slug=post_title_slug)
+    comments = Post.objects.get(
+        title_slug=post_title_slug).comment_set.all()
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -79,6 +77,14 @@ def category(request):
     return render(request, 'blog/category.html', context=context)
 
 
+def archive(request):
+    posts = Post.objects.all().order_by('created_time')
+    dates = set([(p.created_time.year, p.created_time.month) for p in posts])
+    dates = sorted([datetime.date(dt[0], dt[1], 1) for dt in dates])
+    context = {'posts': posts, 'dates': dates}
+    return render(request, 'blog/archive.html', context=context)
+
+
 def tag_list_show(request):
     tags = Tag.objects.all().order_by('slug')
     context = {'tags': tags}
@@ -90,12 +96,7 @@ def tag_show(request, tag_slug):
         tag = Tag.objects.get(slug=tag_slug)
         posts = Tag.objects.get(slug=tag_slug).post_set.all()
     except Exception as e:
-        print(e)
         tag = False
         posts = None
-    context = {
-        'tag': tag,
-        'tag_slug': tag_slug,
-        'posts': posts
-    }
+    context = {'tag': tag, 'tag_slug': tag_slug, 'posts': posts}
     return render(request, 'blog/tag_show.html', context=context)
