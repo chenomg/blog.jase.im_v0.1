@@ -59,12 +59,17 @@
             </div>
             <div id='sidebar' class="col-sm-3 col-md-3 sidebar">
                 <ul>
-                    <form>
+                    <form action='{% url 'blog:index' %}' method='get' id='search-form'>
                         <label>搜索</label>
                         <li>
-                            <input class="search-query span10" type="text" value="" name="search" id="search" placeholder="search"/>
+                            {% if query %}
+                            <input class="search-query span10" type="text" value="{{ query }}" name="query" id="query" placeholder="search"/>
+                            {% else %}
+                            <input class="search-query span10" type="text" value="" name="query" id="query" placeholder="search"/>
+                            {% endif %}
                         </li>
                     </form>
+                    <br>
                     <li>
                         <h5>Slogan:</h5>
                         <p>&nbsp;&nbsp;&nbsp;&nbsp;人生苦短, 我用Python</p>

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -8,8 +9,13 @@ import datetime
 
 
 def index(request):
-    posts = Post.objects.all().order_by('-modified_time')
-    posts_per_page = 3
+    query = request.GET.get('query')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query))
+    else:
+        posts = Post.objects.all().order_by('-modified_time')
+    posts_per_page = 8
     paginator = Paginator(posts, posts_per_page)
     pages_count = paginator.num_pages
     page_id = int(request.GET.get('page', '1'))
@@ -36,6 +42,7 @@ def index(request):
         'page_previous_id': page_previous_id,
         'page_next': page_next,
         'page_next_id': page_next_id,
+        'query': query,
     }
     return render(request, 'blog/index.html', context=context_dic)
 
@@ -47,8 +54,8 @@ def about(request):
 
 def post_detail(request, post_title_slug):
     post = get_object_or_404(Post, title_slug=post_title_slug)
-    comments = Post.objects.get(
-        title_slug=post_title_slug).comment_set.all()
+    comments = Post.objects.get(title_slug=post_title_slug).comment_set.all()
+    tags = post.tags.all().order_by('slug')
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -64,8 +71,9 @@ def post_detail(request, post_title_slug):
     context = {
         'post': post,
         'comments': comments,
+        'tags': tags,
         'form': form,
-        'is_detail': True
+        # 'is_detail': True
     }
     return render(request, 'blog/post_detail.html', context=context)
 
@@ -100,3 +108,13 @@ def tag_show(request, tag_slug):
         posts = None
     context = {'tag': tag, 'tag_slug': tag_slug, 'posts': posts}
     return render(request, 'blog/tag_show.html', context=context)
+
+
+def search(request):
+    if request.method == 'POST':
+        quert = request.POST['query']
+    else:
+        query = None
+        results = None
+    context = {'results': results, 'query': query}
+    return render(request, 'blog/search.html', context=context)

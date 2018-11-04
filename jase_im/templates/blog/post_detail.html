@@ -5,6 +5,13 @@
     <div>
         {% if post %}
           <h5>{{ post.title }}</h5>
+          <p class='post-meta'>
+          <time datetime="{{ post.created_time }}">{{ post.created_time|date:'F j, Y'}}</time>
+          <span>|&nbsp分类:<a href="{% url 'blog:category' %}" >{{ post.category }}</a>&nbsp|&nbsp标签:</span>
+          {% for t in tags %}
+            <span><a href="{% url 'blog:tag_show' t.slug %}" >{{ t }}</a></span>
+          {% endfor %}
+          </p>
           <p>{{ post.content }}</p>
         {% else %}
           There is no such post.
