@@ -9,7 +9,7 @@
             {% for category in categories %}
             <li>
                 <h4>
-                    <a href="{% url 'blog:category'  %}" >&nbsp{{ category.name }}&nbsp</a>
+                    <a href="{% url 'blog:category'  %}/#{{ category.name }}" >&nbsp{{ category.name }}&nbsp</a>
                 </h4>
             </li>
             {% endfor %}
