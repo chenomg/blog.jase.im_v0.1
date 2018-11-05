@@ -23,7 +23,7 @@
         {% if categories %}
             {% for category in categories %}
             <ul>
-                <h4>{{ category.name }}</h4>
+                <h4 id='{{ category.name }}'>{{ category.name }}</h4>
                 <ul>
                     {% for post in posts %}
                         {% if post.category == category %}

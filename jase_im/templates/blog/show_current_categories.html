@@ -1,13 +1,13 @@
 <ul>
   {% if is_detail %}
     <li>
-        <a href="{% url 'blog:category' %}">{{ categories.name }}</a>
+        <a href="{% url 'blog:category' %}/#{{ categories.name }}">{{ categories.name }}</a>
     </li>
   {% else %}
     {% if categories %}
       {% for cat in categories %}
       <li class='categories-show'>
-        <a href="{% url 'blog:category' %}">{{ cat.name }}</a>
+        <a href="{% url 'blog:category' %}/#{{ cat.name }}">{{ cat.name }}</a>
       </li>
       {% endfor %}
     {% else %}

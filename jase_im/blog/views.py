@@ -15,7 +15,7 @@ def index(request):
             Q(title__icontains=query) | Q(content__icontains=query))
     else:
         posts = Post.objects.all().order_by('-modified_time')
-    posts_per_page = 8
+    posts_per_page = 9
     paginator = Paginator(posts, posts_per_page)
     pages_count = paginator.num_pages
     page_id = int(request.GET.get('page', '1'))
