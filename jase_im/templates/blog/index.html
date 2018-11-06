@@ -9,16 +9,25 @@
             <h5>
                 <a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a>
             </h5>
-                <p>{{ post.content }}</p>
+                <!--<p>{{ post.content }}</p>-->
+                {{ post.excerpt|safe }}
                 <hr>
             {% endfor %}
             <div id='page_indicator'>
                 {% if page_previous %}
-                <a href="{% url 'blog:index' %}?page={{page_previous_id}}">上一页</a>
+                    {% if query %}
+                    <a href="{% url 'blog:index' %}?query={{ query }}&page={{page_previous_id}}">上一页</a>
+                    {% else %}
+                    <a href="{% url 'blog:index' %}?page={{page_previous_id}}">上一页</a>
+                    {% endif %}
                 {% endif %}
                     第{{ page_current }}页
                 {% if page_next %}
-                    <a href="{% url 'blog:index' %}?page={{page_next_id}}">下一页</a>
+                    {% if query %}
+                    <a href="{% url 'blog:index' %}?query={{ query }}&page={{page_next_id}}">下一页</a>
+                    {% else %}
+                        <a href="{% url 'blog:index' %}?page={{page_next_id}}">下一页</a>
+                    {% endif %}
                 {% endif %}
             </div>
         </ul>

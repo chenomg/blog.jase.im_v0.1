@@ -5,7 +5,18 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from blog.models import Category, Tag, Post, Archive, Comment
 from .forms import CommentForm
+from markdown import markdown, Markdown
 import datetime
+
+md = Markdown(extensions=[
+    'markdown.extensions.extra',
+    'markdown.extensions.codehilite',
+    'markdown.extensions.toc',
+])
+exts = [
+    'markdown.extensions.extra', 'markdown.extensions.codehilite',
+    'markdown.extensions.tables', 'markdown.extensions.toc'
+]
 
 
 def index(request):
@@ -15,6 +26,8 @@ def index(request):
             Q(title__icontains=query) | Q(content__icontains=query))
     else:
         posts = Post.objects.all().order_by('-modified_time')
+    for post in posts:
+        post.excerpt = md.convert(post.excerpt)
     posts_per_page = 9
     paginator = Paginator(posts, posts_per_page)
     pages_count = paginator.num_pages
@@ -54,6 +67,9 @@ def about(request):
 
 def post_detail(request, post_title_slug):
     post = get_object_or_404(Post, title_slug=post_title_slug)
+    # post.content = md.convert(post.content)
+    post.content = markdown(post.content, extensions=exts)
+    # post.toc = md.toc
     comments = Post.objects.get(title_slug=post_title_slug).comment_set.all()
     tags = post.tags.all().order_by('slug')
     if request.method == 'POST':

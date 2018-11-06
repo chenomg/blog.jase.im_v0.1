@@ -12,7 +12,10 @@
             <span><a href="{% url 'blog:tag_show' t.slug %}" >{{ t }}</a></span>
           {% endfor %}
           </p>
-          <p>{{ post.content }}</p>
+          {{ post.content|safe }}
+          <div>
+              {{ post.toc|safe }}
+          </div>
         {% else %}
           There is no such post.
         {% endif %}

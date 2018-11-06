@@ -1,5 +1,6 @@
 from django.db import models
 from uuslug import slugify
+from mdeditor.fields import MDTextField
 
 
 class Category(models.Model):
@@ -38,7 +39,9 @@ class Post(models.Model):
     title = models.CharField(max_length=128)
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
-    content = models.TextField(blank=True)
+    # content = models.TextField()
+    content = MDTextField()
+    excerpt = models.CharField(max_length=200, blank=True)
     category = models.ForeignKey(Category)
     tags = models.ManyToManyField(Tag)
     title_slug = models.SlugField()
@@ -46,6 +49,8 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         self.title_slug = slugify(self.title)
+        if not self.excerpt:
+            self.excerpt = self.content[:200]
         super().save(*args, **kwargs)
 
     def __str__(self):

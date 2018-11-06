@@ -21,3 +21,6 @@ ul {
 .archive-posts {
   margin-left: 30px;
 }
+.container-fluid div {
+  padding-left: 15px;
+}
