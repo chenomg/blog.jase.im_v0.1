@@ -1,22 +1,21 @@
-from django.db.models import Q
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.db.models import Q
+from django.utils.text import slugify
 from blog.models import Category, Tag, Post, Archive, Comment
 from .forms import CommentForm
 from markdown import markdown, Markdown
+from markdown.extensions.toc import TocExtension
+# from uuslug import slugify
 import datetime
 
 md = Markdown(extensions=[
     'markdown.extensions.extra',
     'markdown.extensions.codehilite',
-    'markdown.extensions.toc',
+    TocExtension(slugify=slugify),
 ])
-exts = [
-    'markdown.extensions.extra', 'markdown.extensions.codehilite',
-    'markdown.extensions.tables', 'markdown.extensions.toc'
-]
 
 
 def index(request):
@@ -67,9 +66,9 @@ def about(request):
 
 def post_detail(request, post_title_slug):
     post = get_object_or_404(Post, title_slug=post_title_slug)
-    # post.content = md.convert(post.content)
-    post.content = markdown(post.content, extensions=exts)
-    # post.toc = md.toc
+    post.content = md.convert(post.content)
+    # post.content = markdown(post.content, extensions=exts)
+    post.toc = md.toc
     comments = Post.objects.get(title_slug=post_title_slug).comment_set.all()
     tags = post.tags.all().order_by('slug')
     if request.method == 'POST':

@@ -41,7 +41,7 @@ class Post(models.Model):
     modified_time = models.DateTimeField(auto_now=True)
     # content = models.TextField()
     content = MDTextField()
-    excerpt = models.CharField(max_length=200, blank=True)
+    excerpt = models.CharField(max_length=300, blank=True)
     category = models.ForeignKey(Category)
     tags = models.ManyToManyField(Tag)
     title_slug = models.SlugField()

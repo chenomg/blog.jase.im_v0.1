@@ -23,5 +23,4 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^blog/', include('blog.urls')),
     url(r'^booking/', include('booking.urls')),
-    url(r'^markdownx/', include('markdownx.urls')),
 ]
