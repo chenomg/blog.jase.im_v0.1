@@ -1,11 +1,26 @@
-<ul>
-  {% if tags %}
-    {% for tag in tags %}
-      <li>
-        <a href="{% url 'blog:tag_show' tag.slug %}">{{ tag.name }}</a>
-      </li>
-    {% endfor %}
-  {% else %}
-    <li>No tag</li>
-  {% endif %}
-</ul>
+{% if tags %}
+  <div class="col-lg-6">
+    <ul class="list-unstyled mb-0">
+      <ul>
+        {% for tag in pre_half %}
+        <li>
+          <a href="{% url 'blog:tag_show' tag.slug %}">{{ tag.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </ul>
+  </div>
+  <div class="col-lg-6">
+    <ul class="list-unstyled mb-0">
+      <ul>
+        {% for tag in lst_half %}
+        <li>
+          <a href="{% url 'blog:tag_show' tag.slug %}">{{ tag.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </ul>
+  </div>
+{% else %}
+  <li>No tag</li>
+{% endif %}

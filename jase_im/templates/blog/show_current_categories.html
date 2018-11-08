@@ -1,17 +1,32 @@
-<ul>
-  {% if is_detail %}
-    <li>
-        <a href="{% url 'blog:category' %}/#{{ categories.name }}">{{ categories.name }}</a>
-    </li>
+{% if is_detail %}
+  <li>
+      <a href="{% url 'blog:category' %}/#{{ categories.name }}">{{ categories.name }}</a>
+  </li>
+{% else %}
+  {% if categories %}
+  <div class="col-lg-6">
+    <ul class="list-unstyled mb-0">
+      <ul>
+        {% for cat in pre_half %}
+        <li>
+          <a href="{% url 'blog:category' %}/#{{ cat.name }}">{{ cat.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </ul>
+  </div>
+  <div class="col-lg-6">
+    <ul class="list-unstyled mb-0">
+      <ul>
+        {% for cat in lst_half %}
+        <li>
+          <a href="{% url 'blog:category' %}/#{{ cat.name }}">{{ cat.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </ul>
+  </div>
   {% else %}
-    {% if categories %}
-      {% for cat in categories %}
-      <li class='categories-show'>
-        <a href="{% url 'blog:category' %}/#{{ cat.name }}">{{ cat.name }}</a>
-      </li>
-      {% endfor %}
-    {% else %}
-      <li>No category</li>
-    {% endif %}
+    <li>No category</li>
   {% endif %}
-</ul>
+{% endif %}

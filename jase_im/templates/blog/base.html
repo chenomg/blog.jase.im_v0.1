@@ -68,6 +68,20 @@
             </div>
 
             <div id='sidebar' class="col-sm-4 col-md-4 sidebar">
+                <!-- Slogan -->
+                <div class="card my-4">
+                  <h5 class="card-header">Slogan</h5>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <ul class="list-unstyled mb-0">
+                          <p>&nbsp;&nbsp;&nbsp;&nbsp;人生苦短, 我用Python</p>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Search Widget -->
                 <div class="card my-4">
                     <h5 class="card-header">Search</h5>
@@ -87,39 +101,61 @@
                     </div>
                 </div>
 
-
-                <ul>
-                    <li>
-                        <h5>Slogan:</h5>
-                        <p>&nbsp;&nbsp;&nbsp;&nbsp;人生苦短, 我用Python</p>
-                    </li>
-                    <br />
-                    <li>
-                        <h5>Most viewed:</h5>
+                <!-- Most Viewed -->
+                <div class="card my-4">
+                  <h5 class="card-header">Most Viewed</h5>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <ul class="list-unstyled mb-0">
                         {% block most_viewed_posts %}
                             {% most_viewed_posts %}
                         {% endblock %}
-                    </li>
-                    <br />
-                    <li>
-                        <h5>Recent Posts:</h5>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Recent Posts -->
+                <div class="card my-4">
+                  <h5 class="card-header">Recent Posts</h5>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <ul class="list-unstyled mb-0">
                         {% block recent_posts %}
                             {% recent_posts %}
                         {% endblock %}
-                    </li>
-                    <br />
-                    <li>
-                        <h5>Categoy:</h5>
-                        {% block category %}
-                        {% endblock %}
-                    </li>
-                    <br />
-                    <li>
-                        <h5>Tag:</h5>
-                        {% block tag %}
-                        {% endblock %}
-                    </li>
-                </ul>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Categories Widget -->
+                <div class="card my-4">
+                  <h5 class="card-header">Categories</h5>
+                  <div class="card-body">
+                    <div class="row">
+                      {% block category %}
+                      {% endblock %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tags Widget -->
+                <div class="card my-4">
+                  <h5 class="card-header">Tags</h5>
+                  <div class="card-body">
+                    <div class="row">
+                      {% block tag %}
+                      {% endblock %}
+                    </div>
+                  </div>
+                </div>
+
+
             </div>
         </div>
     </div>
