@@ -46,6 +46,7 @@ class Post(models.Model):
     tags = models.ManyToManyField(Tag)
     title_slug = models.SlugField()
     views = models.PositiveIntegerField(default=0)
+    likes = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
         self.title_slug = slugify(self.title)

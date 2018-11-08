@@ -9,8 +9,14 @@
             <h5>
                 <a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a>
             </h5>
-                <!--<p>{{ post.content }}</p>-->
+            <div>
+                <time>{{ post.created_time|date:'Y-m-d' }}</time>
+                <span>views:{{ post.views }}</span>
+                <span>likes:{{ post.likes }}</span>
+            </div>
+            <div>
                 {{ post.excerpt|safe }}
+            </div>
                 <hr>
             {% endfor %}
             <div id='page_indicator'>
