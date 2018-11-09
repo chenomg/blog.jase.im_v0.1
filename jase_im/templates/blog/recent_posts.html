@@ -2,7 +2,7 @@
   {% if recent_posts %}
     {% for post in recent_posts %}
       <li>
-        <a href="{% url 'blog:post_detail' post.title_slug %}">{{ post.sidebar_name }}</a>
+        <a href="{% url 'blog:post_detail' post.title_slug %}" title='{{ post.title }}'>{{ post.sidebar_name }}</a>
       </li>
     {% endfor %}
   {% else %}

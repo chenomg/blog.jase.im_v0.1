@@ -14,8 +14,8 @@ def show_current_categories(is_detail=False, post=None):
         categories = post.category
     else:
         categories = Category.objects.all()
-        pre_half = categories[:math.ceil(categories.count() // 2 + 1)]
-        lst_half = categories[math.ceil(categories.count() // 2 + 1):]
+        pre_half = categories[:math.ceil(categories.count() / 2)]
+        lst_half = categories[math.ceil(categories.count() / 2):]
     return {
         'categories': categories,
         'pre_half': pre_half,
@@ -30,8 +30,8 @@ def show_current_tags(is_detail=False, post=None):
         tags = post.tags.all()
     else:
         tags = Tag.objects.all()
-        pre_half = tags[:math.ceil(tags.count() // 2)]
-        lst_half = tags[math.ceil(tags.count() // 2):]
+        pre_half = tags[:math.ceil(tags.count() / 2)]
+        lst_half = tags[math.ceil(tags.count() / 2):]
     return {
         'tags': tags,
         'pre_half': pre_half,
