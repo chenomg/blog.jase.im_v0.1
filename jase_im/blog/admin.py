@@ -14,8 +14,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    fields = ['title', 'content', 'excerpt', 'category', 'views']
-    list_display = ('title', 'created_time', 'content', 'category', 'views')
+    fields = ['title', 'content', 'excerpt', 'category', 'views', 'author']
+    list_display = ('title', 'created_time', 'content', 'category', 'views',
+                    'author')
 
 
 admin.site.register(Category, CategoryAdmin)

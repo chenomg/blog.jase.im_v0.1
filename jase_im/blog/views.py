@@ -24,10 +24,10 @@ def index(request):
         posts = Post.objects.filter(
             Q(title__icontains=query) | Q(content__icontains=query))
     else:
-        posts = Post.objects.all().order_by('-modified_time')
+        posts = Post.objects.all().order_by('-created_time')
     for post in posts:
         post.excerpt = md.convert(post.excerpt)
-    posts_per_page = 9
+    posts_per_page = 4
     paginator = Paginator(posts, posts_per_page)
     pages_count = paginator.num_pages
     page_id = int(request.GET.get('page', '1'))
@@ -66,11 +66,18 @@ def about(request):
 
 def post_detail(request, post_title_slug):
     post = get_object_or_404(Post, title_slug=post_title_slug)
+    post.views = post.views + 1
+    post.save()
     post.content = md.convert(post.content)
     # post.content = markdown(post.content, extensions=exts)
     post.toc = md.toc
     comments = Post.objects.get(title_slug=post_title_slug).comment_set.all()
     tags = post.tags.all().order_by('slug')
+    context = {
+        'post': post,
+        'comments': comments,
+        'tags': tags,
+    }
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -79,17 +86,11 @@ def post_detail(request, post_title_slug):
             content = form.cleaned_data['content']
             comment = Comment.objects.create(
                 name=name, content=content, email=email, post=post)
-        return HttpResponseRedirect(
-            reverse('blog:post_detail', args=[post.title_slug]))
+            context['form'] = form
+            return render(request, 'blog/post_detail.html', context=context)
     else:
         form = CommentForm()
-    context = {
-        'post': post,
-        'comments': comments,
-        'tags': tags,
-        'form': form,
-        # 'is_detail': True
-    }
+    context['form'] = form
     return render(request, 'blog/post_detail.html', context=context)
 
 
@@ -118,6 +119,8 @@ def tag_show(request, tag_slug):
     try:
         tag = Tag.objects.get(slug=tag_slug)
         posts = Tag.objects.get(slug=tag_slug).post_set.all()
+        for p in posts:
+            p.content = md.convert(p.content)
     except Exception as e:
         tag = False
         posts = None

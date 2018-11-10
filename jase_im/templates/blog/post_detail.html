@@ -2,62 +2,87 @@
 {% load staticfiles %}
 {% load blog_template_tags %}
 {% block body_block %}
-    <div>
-        {% if post %}
-          <h5>{{ post.title }}</h5>
-          <p class='post-meta'>
-          <time datetime="{{ post.created_time }}">{{ post.created_time|date:'F j, Y'}}</time>
-          <span>|&nbsp分类:<a href="{% url 'blog:category' %}" >{{ post.category }}</a>&nbsp|&nbsp标签:</span>
-          {% for t in tags %}
-            <span><a href="{% url 'blog:tag_show' t.slug %}" >{{ t }}</a></span>
-          {% endfor %}
-          </p>
-          {{ post.content|safe }}
-          <div>
-              {{ post.toc|safe }}
-          </div>
-        {% else %}
-          There is no such post.
-        {% endif %}
-    </div>
-    <div id='comments_show'>
-        <h3>评论:</h3>
-        {% if comments %}
-            {% for comment in comments %}
-            <h7><strong>{{ comment.name }}</strong> 说 (于{{ comment.created_time }}):</h7>
-                <p>{{ comment.content }}</p>
-                <hr>
-            {% endfor %}
-        {% else %}
-            <strong>There is no comment for this post.</strong>
-        {% endif %}
-    </div>
+    {% if post %}
+      <h1 class='mt-4'>{{ post.title }}</h1>
+      <!-- Author -->
+      <p class="lead">
+        by Jase Chen
+      </p>
+
+      <hr>
+
+      <!-- Date/Time -->
+      <p>发表于: {{ post.created_time|date:' m月 d日, Y年' }}
+      <span>|&nbsp分类:<a href="{% url 'blog:category' %}" >{{ post.category }}</a>&nbsp|&nbsp标签:
+      {% if tags %}
+        {% for t in tags %}
+          <span><a href="{% url 'blog:tag_show' t.slug %}" >{{ t }}</a></span>
+        {% endfor %}
+      {% else %}
+        无
+      {% endif %}
+      </span>
+      </p>
+
+      <hr>
+
+      <!--文章正文-->
+      {{ post.content|safe }}
+      <div>
+          {{ post.toc|safe }}
+      </div>
+    {% else %}
+      There is no such post.
+    {% endif %}
+
     <br>
-    <form action="{% url 'blog:post_detail' post.title_slug %}" method="post" id='comment_submit' accept-charset="utf-8">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="row">
-            <div class="col-md-4">
-                {{ form.name.errors }}
-                <label for="{{ form.name.id_for_label }}">用户名：</label>
-                {{ form.name }}
-            </div>
-            <div class="col-md-4">
-                {{ form.email.errors }}
-                <label for="{{ form.email.id_for_label }}">E-mail：</label>
-                {{ form.email }}
-            </div>
-            <div class="col-md-6">
-                {{ form.content.errors }}
-                <label for="{{ form.comment.id_for_label }}">内容：</label>
-                <br>
-                {{ form.content }}
-            </div>
-            <div class="col-md-12">
-                <input type="submit" value="提交评论" name="" id="comment_submit"/>
-            </div>
-        </div>    <!-- row -->
-    </form>
+    <hr>
+    <br>
+
+    <!--评论展示区-->
+    <h3>Comments:</h3>
+    {% if comments %}
+      {% for comment in comments %}
+        <div class="media mb-4">
+          <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+          <div class="media-body">
+            <h5 class="mt-0">{{ comment.name }}</h5>
+            {{ comment.content }}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+        <strong>欢迎发表评论~~</strong>
+    {% endif %}
+
+    <!--发表评论-->
+    <div class="card my-4">
+      <h5 class="card-header">Leave a Comment:</h5>
+      <div class="card-body">
+        <!--<form>-->
+        <form action="{% url 'blog:post_detail' post.title_slug %}" method="post" id='comment_submit' accept-charset="utf-8">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          <div class="form-group">
+            {{ form.name.errors }}
+            <label for="{{ form.name.id_for_label }}">用户名：</label>
+            {{ form.name }}
+            {{ form.email.errors }}
+            <label for="{{ form.email.id_for_label }}">&nbspE-mail：</label>
+            {{ form.email }}
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+          </div>
+          <div class="form-group">
+            {{ form.content.errors }}
+            <label for="{{ form.comment.id_for_label }}">内容：</label>
+            <br>
+            {{ form.content }}
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+
 {% endblock %}
 {% block tag %}
     {% show_current_tags is_detail post %}

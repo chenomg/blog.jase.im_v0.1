@@ -5,7 +5,7 @@ from blog.models import Category, Post, Tag
 import math
 
 register = template.Library()
-NAME_LEN_SIDEBAR = 35
+NAME_LEN_SIDEBAR = 30
 
 
 @register.inclusion_tag('blog/show_current_categories.html')

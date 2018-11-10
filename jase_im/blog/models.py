@@ -37,6 +37,7 @@ class Tag(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=128)
+    author = models.CharField(max_length=128, default='Jase Chen')
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     # content = models.TextField()
@@ -51,7 +52,12 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         self.title_slug = slugify(self.title)
         if not self.excerpt:
-            self.excerpt = self.content[:200]
+            if len(self.content) <201:
+                self.excerpt = self.content[:200]
+            else:
+                self.excerpt = self.content[:200] + '...'
+        if not self.author:
+            self.author = 'Unknow Author'
         super().save(*args, **kwargs)
 
     def __str__(self):
