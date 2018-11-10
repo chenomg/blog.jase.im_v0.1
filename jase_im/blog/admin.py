@@ -14,7 +14,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    fields = ['title', 'content', 'excerpt', 'category', 'views', 'author']
+    fields = ['title', 'content', 'excerpt', 'category', 'views', 'author', 'tags']
     list_display = ('title', 'created_time', 'content', 'category', 'views',
                     'author')
 
