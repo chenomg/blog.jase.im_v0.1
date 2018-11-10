@@ -8,18 +8,25 @@ class PostInline(admin.TabularInline):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    fields = ['name', 'slug']
-    inlines = [PostInline]
-    list_display = ('name', 'created_time')
+    fields = ['name']
+    # inlines = [PostInline]
+    list_display = ('name', 'created_time', 'slug')
+
+
+class TagAdmin(admin.ModelAdmin):
+    fields = ['name']
+    list_display = ('name', 'created_time', 'slug')
 
 
 class PostAdmin(admin.ModelAdmin):
-    fields = ['title', 'content', 'excerpt', 'category', 'views', 'author', 'tags']
-    list_display = ('title', 'created_time', 'content', 'category', 'views',
-                    'author')
+    fields = [
+        'title', 'content', 'excerpt', 'category', 'views', 'author', 'tags'
+    ]
+    list_display = ('title', 'created_time', 'category', 'views', 'author',
+                    'title_slug')
 
 
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(Tag)
+admin.site.register(Tag, TagAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(Archive)

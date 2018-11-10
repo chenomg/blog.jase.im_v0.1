@@ -5,7 +5,7 @@ from mdeditor.fields import MDTextField
 
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True)
     created_time = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -21,7 +21,7 @@ class Category(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=30, unique=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True)
     created_time = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -45,7 +45,7 @@ class Post(models.Model):
     excerpt = models.CharField(max_length=300, blank=True)
     category = models.ForeignKey(Category)
     tags = models.ManyToManyField(Tag)
-    title_slug = models.SlugField()
+    title_slug = models.SlugField(blank=True)
     views = models.PositiveIntegerField(default=0)
     likes = models.PositiveIntegerField(default=0)
 
