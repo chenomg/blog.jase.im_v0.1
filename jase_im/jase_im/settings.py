@@ -17,6 +17,7 @@ import django
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMP_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 DJANGO_STATIC = os.path.join(
     os.path.dirname(os.path.abspath(django.__file__)), 'contrib', 'admin',
@@ -133,12 +134,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 STATICFILES_DIRS = [
     STATIC_DIR,
+    MEDIA_ROOT,
     DJANGO_STATIC,
 ]
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
 
 MDEDITOR_CONFIGS = {
     'default': {
