@@ -4,6 +4,7 @@
 {% block body_block %}
     <div>
         <h3>存档文章</h3>
+        {% if dates %}
         <ul>
             {% for dt in dates %}
             <h5>{{ dt.year }}年{{ dt.month }}月</h5>
@@ -21,6 +22,9 @@
                 <br>
             {% endfor %}
         </ul>
+        {% else %}
+          <strong>还没有发表文章哦~</strong>
+        {% endif %}
     </div>
 {% endblock %}
 {% block tag %}

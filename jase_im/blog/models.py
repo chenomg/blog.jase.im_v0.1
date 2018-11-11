@@ -47,7 +47,7 @@ class Post(models.Model):
     tags = models.ManyToManyField(Tag)
     title_slug = models.SlugField(blank=True)
     views = models.PositiveIntegerField(default=0)
-    likes = models.PositiveIntegerField(default=0)
+    # likes = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
         self.title_slug = slugify(self.title)
@@ -67,8 +67,23 @@ class Post(models.Model):
         verbose_name_plural = 'posts'
 
 
-class Archive(models.Model):
-    pass
+class Page(models.Model):
+    title = models.CharField(max_length=128)
+    created_time = models.DateTimeField(auto_now_add=True)
+    modified_time = models.DateTimeField(auto_now=True)
+    content = MDTextField()
+    title_slug = models.SlugField(blank=True)
+    views = models.PositiveIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        self.title_slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = 'pages'
 
 
 class Comment(models.Model):

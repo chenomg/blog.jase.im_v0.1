@@ -137,8 +137,8 @@ STATICFILES_DIRS = [
     STATIC_DIR,
     DJANGO_STATIC,
 ]
-MEDIA_ROOT = os.path.join(STATIC_DIR, 'uploads')
-MEDIA_URL = '/static/uploads/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 MDEDITOR_CONFIGS = {
     'default': {
@@ -157,7 +157,7 @@ MDEDITOR_CONFIGS = {
         'upload_image_formats': ["jpg", "jpeg", "gif", "png", "bmp",
                                  "webp"],  # image upload format type
         'image_floder':
-        'editor',  # image save the folder name
+        'uploads',  # image save the folder name
         'theme':
         'default',  # edit box theme, dark / default
         'preview_theme':

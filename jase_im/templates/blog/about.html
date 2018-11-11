@@ -2,10 +2,7 @@
 {% load blog_template_tags %}
 {% load staticfiles %}
 {% block body_block %}
-    <h2>About Me</h2>
-    <p>
-      欢迎来到我的个人博客, 这是我的第一个自己设计的网站,希望你喜欢.
-    </p>
+    {{ page.content|safe }}
 {% endblock %}
 {% block tag %}
     {% show_current_tags %}

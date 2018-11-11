@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.utils.text import slugify
-from blog.models import Category, Tag, Post, Archive, Comment
+from blog.models import Category, Tag, Post, Comment, Page
 from .forms import CommentForm
 from markdown import markdown, Markdown
 from markdown.extensions.toc import TocExtension
@@ -60,7 +60,12 @@ def index(request):
 
 
 def about(request):
-    context_dic = {}
+    page = Page.objects.get(title_slug='about')
+    page.views += 1
+    page.save()
+    page.content = md.convert(page.content)
+    page.toc = md.toc
+    context_dic = {'page': page}
     return render(request, 'blog/about.html', context=context_dic)
 
 
