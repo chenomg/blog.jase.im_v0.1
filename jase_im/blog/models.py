@@ -44,7 +44,7 @@ class Post(models.Model):
     content = MDTextField()
     excerpt = models.CharField(max_length=300, blank=True)
     category = models.ForeignKey(Category)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)
     title_slug = models.SlugField(blank=True)
     views = models.PositiveIntegerField(default=0)
     # likes = models.PositiveIntegerField(default=0)
