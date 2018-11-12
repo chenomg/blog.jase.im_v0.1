@@ -11,7 +11,7 @@
                     <a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a>
                 </h2>
                 <p class="card-text">{{ post.excerpt|safe }}</p>
-                <a href="{% url 'blog:post_detail' post.title_slug  %}" class="btn btn-primary">Read More &rarr;</a>
+                <a href="{% url 'blog:post_detail' post.title_slug  %}" class="btn btn-info">Read More &rarr;</a>
             </div>
             <div class="card-footer text-muted">
                 Posted on <time>{{ post.created_time|date:'M d, Y' }}</time>&nbsp by Jase Chen
@@ -25,17 +25,17 @@
         <div id='page_indicator'>
             {% if page_previous %}
                 {% if query %}
-                <a href="{% url 'blog:index' %}?query={{ query }}&page={{page_previous_id}}">上一页</a>
+                <a id='page-pre' class='btn' href="{% url 'blog:index' %}?query={{ query }}&page={{page_previous_id}}">上一页</a>
                 {% else %}
-                <a href="{% url 'blog:index' %}?page={{page_previous_id}}">上一页</a>
+                <a id='page-pre' class='btn' href="{% url 'blog:index' %}?page={{page_previous_id}}">上一页</a>
                 {% endif %}
             {% endif %}
-                第{{ page_current }}页
+                 <span class='btn'>第{{ page_current }}页</span>
             {% if page_next %}
                 {% if query %}
-                <a href="{% url 'blog:index' %}?query={{ query }}&page={{page_next_id}}">下一页</a>
+                <a id='page-next' class='btn' href="{% url 'blog:index' %}?query={{ query }}&page={{page_next_id}}">下一页</a>
                 {% else %}
-                    <a href="{% url 'blog:index' %}?page={{page_next_id}}">下一页</a>
+                <a id='page-next' class='btn' href="{% url 'blog:index' %}?page={{page_next_id}}">下一页</a>
                 {% endif %}
             {% endif %}
         </div>
