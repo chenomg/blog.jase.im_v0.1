@@ -3,7 +3,7 @@
     <ul class="list-unstyled mb-0">
       <ul>
         {% for tag in pre_half %}
-        <li>
+        <li class='tag-show'>
           <a href="{% url 'blog:tag_show' tag.slug %}">{{ tag.name }}</a>
         </li>
         {% endfor %}
@@ -14,7 +14,7 @@
     <ul class="list-unstyled mb-0">
       <ul>
         {% for tag in lst_half %}
-        <li>
+        <li class='tag-show'>
           <a href="{% url 'blog:tag_show' tag.slug %}">{{ tag.name }}</a>
         </li>
         {% endfor %}

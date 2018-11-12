@@ -1,7 +1,7 @@
 <ul>
   {% if recent_posts %}
     {% for post in recent_posts %}
-      <li>
+      <li class='tag-show'>
         <a href="{% url 'blog:post_detail' post.title_slug %}" title='{{ post.title }}'>{{ post.sidebar_name }}</a>
       </li>
     {% endfor %}

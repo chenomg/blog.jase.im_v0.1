@@ -36,3 +36,7 @@ ul {
 #page_indicator {
   color: #0D123F;
 }
+.tag-show {
+  list-style-type:  none;
+}
+
