@@ -30,7 +30,7 @@
                 <a id='page-pre' class='btn' href="{% url 'blog:index' %}?page={{page_previous_id}}">上一页</a>
                 {% endif %}
             {% endif %}
-                 <span class='btn'>第{{ page_current }}页</span>
+                 <span>第{{ page_current }}页</span>
             {% if page_next %}
                 {% if query %}
                 <a id='page-next' class='btn' href="{% url 'blog:index' %}?query={{ query }}&page={{page_next_id}}">下一页</a>

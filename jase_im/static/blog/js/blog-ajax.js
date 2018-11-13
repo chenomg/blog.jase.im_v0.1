@@ -1,29 +1,30 @@
 $(document).ready(function(){
-  $("#likes").click(function(){
-    var catid;
-    catid = $(this).attr("data-catid");
-    $.get('/rango/like_category/', {category_id: catid}, function(data){
-      $('#like_count').html(data);
-      $('#likes').hide();
+  $("#comment_submit_key").click(function(){
+    $.ajax({
+    //几个参数需要注意一下
+        type: "POST",//方法类型
+        dataType: "json",//预期服务器返回的数据类型
+        url: "/blog/comment_submit/" ,//url
+        data: $('#comment_submit').serialize(),
+        success: function (result) {
+            console.log(result);//打印服务端返回的数据(调试用)
+            if (result.resultCode == 200) {
+                alert("SUCCESS");
+            }
+            ;
+        },
+        error : function() {
+            alert("异常！");
+        }
     });
-    });
-  $('#suggestion').keyup(function(){
-    var query;
-    query = $(this).val();
-    $.get('/rango/suggest_category/', {suggestion: query}, function(data){
-      $('#cats').html(data);
-    });
-    });
-  $('.add_button').click(function(){
-    var link;
-    var title;
-    var summary;
-    link = $(this).attr("link");
-    title = $(this).attr("title");
-    category_id = $(this).attr("category_id");
-    $.get('/rango/add_page_from_search/', {link: link, title: title, category_id: category_id}, function(data){
-      $('#refresh_pages').html(data);
-    });
-    $(this).hide();
-    });
+
+    //var post_title_slug;
+    //var form = new FormData(document.getElementById('comment-submit');
+    //post_title_slug = $(this).attr("post_title_slug");
+    //form = $(this).attr("post_title_slug");
+    //$.post('/blog/comment_submit/', {post_title_slug: post_title_slug}, function(data){
+      //$('#comments-form-show').html(data);
+    //});
+    //});
+});
 });

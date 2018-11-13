@@ -99,6 +99,29 @@ def post_detail(request, post_title_slug):
     return render(request, 'blog/post_detail.html', context=context)
 
 
+def comment_submit(request):
+    print('...')
+    post_title_slug = request.META.get('post_title_slug')
+    post = get_object_or_404(Post, title_slug=post_title_slug)
+    comments = post.comment_set.all()
+    context = {
+        'comments': comments,
+        'form': CommentForm(),
+    }
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            content = form.cleaned_data['content']
+            comment = Comment.objects.create(
+                name=name, content=content, email=email, post=post)
+            return render(request, 'blog/comments_form_update.html', context=context)
+        else:
+            context['form'] = form
+    return render(request, 'blog/comments_form_update.html', context=context)
+
+
 def category(request):
     categories = Category.objects.all().order_by('-name')
     posts = Post.objects.all()
