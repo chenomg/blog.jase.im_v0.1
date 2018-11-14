@@ -62,7 +62,7 @@
         <div class="card-body">
           <!--<form>-->
           <!--<form action="{% url 'blog:post_detail' post.title_slug %}" method="post" id='comment_submit' accept-charset="utf-8">-->
-          <form id='comment_submit' accept-charset="utf-8">
+          <form method='post' id='comment_submit' accept-charset="utf-8">
             {% csrf_token %}
             {{ form.non_field_errors }}
             <div class="form-group">
@@ -80,9 +80,9 @@
               <br>
               {{ form.content }}
             </div>
-            <input type="hidden" value="{{ post.title_slug }}" id="post_title_slug"/>
+            <input type="hidden" value="{{ post.title_slug }}" name="post_title_slug"/>
             <!--<button type="submit" class="btn btn-primary">Submit</button>-->
-            <a id='comment_submit_key' class="btn btn-primary">Submit</a>
+            <button id='comment_submit_key' type='submit' class="btn btn-primary">Submit</button>
           </form>
         </div>
       </div>
