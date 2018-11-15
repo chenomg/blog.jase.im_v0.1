@@ -1,30 +1,33 @@
 $(document).ready(function(){
-  $("#comment_submit_key").click(function(){
+    $.ajaxSetup({
+      data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+    });
+  $("#comment_submit").submit(function(){
+    event.preventDefault();
     $.ajax({
-    //几个参数需要注意一下
         type: "POST",//方法类型
-        dataType: "json",//预期服务器返回的数据类型
+        //dataType: "json",//预期服务器返回的数据类型
         url: "/blog/comment_submit/" ,//url
         data: $('#comment_submit').serialize(),
         success: function (result) {
-            console.log(result);//打印服务端返回的数据(调试用)
-            if (result.resultCode == 200) {
-                alert("SUCCESS");
-            }
-            ;
+          $('#comments-show').append('<li><div class="media mb-4">' +
+            '<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">' +
+            '<div class="media-body">' +
+            '<h5 class="mt-0">' + result.name + '</h5>' +
+            '<p>' + result.content + '</p>' +
+            '</div>' +
+            '</div></li>');
+          $('#waitting-for-comment').html('');
+          $('#id_name').val('');
+          $('#id_email').val('');
+          $('#id_content').val('');
+          $('#input-help').html('');
         },
         error : function() {
-            alert("异常！");
+          $('#input-help').html('&nbsp&nbsp输入有误,请重新输入!');
         }
     });
+});
+});
 
-    //var post_title_slug;
-    //var form = new FormData(document.getElementById('comment-submit');
-    //post_title_slug = $(this).attr("post_title_slug");
-    //form = $(this).attr("post_title_slug");
-    //$.post('/blog/comment_submit/', {post_title_slug: post_title_slug}, function(data){
-      //$('#comments-form-show').html(data);
-    //});
-    //});
-});
-});
+

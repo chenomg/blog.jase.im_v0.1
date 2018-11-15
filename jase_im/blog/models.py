@@ -94,4 +94,4 @@ class Comment(models.Model):
     post = models.ForeignKey(Post)
 
     def __str__(self):
-        return self.title
+        return self.content

@@ -10,6 +10,7 @@ from markdown import markdown, Markdown
 from markdown.extensions.toc import TocExtension
 # from uuslug import slugify
 import datetime
+import json
 
 md = Markdown(extensions=[
     'markdown.extensions.extra',
@@ -100,26 +101,27 @@ def post_detail(request, post_title_slug):
 
 
 def comment_submit(request):
-    print('...')
-    post_title_slug = request.META.get('post_title_slug')
+    post_title_slug = request.POST['post_title_slug']
     post = get_object_or_404(Post, title_slug=post_title_slug)
-    comments = post.comment_set.all()
-    context = {
-        'comments': comments,
-        'form': CommentForm(),
-    }
     if request.method == 'POST':
         form = CommentForm(request.POST)
+        response_data = {
+            'success': False,
+            'name': form['name'],
+            'content': form['content'],
+        }
         if form.is_valid():
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
             content = form.cleaned_data['content']
             comment = Comment.objects.create(
                 name=name, content=content, email=email, post=post)
-            return render(request, 'blog/comments_form_update.html', context=context)
-        else:
-            context['form'] = form
-    return render(request, 'blog/comments_form_update.html', context=context)
+            response_data['success'] = True
+            response_data['name'] = name
+            response_data['content'] = content
+            print('提交成功,正在刷新')
+        return HttpResponse(
+            json.dumps(response_data), content_type='application/json')
 
 
 def category(request):

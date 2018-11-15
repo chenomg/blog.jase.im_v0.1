@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Category, Tag, Post, Page
+from blog.models import Category, Tag, Post, Page, Comment
 
 
 class PostInline(admin.TabularInline):
@@ -28,12 +28,20 @@ class PostAdmin(admin.ModelAdmin):
 
 class PageAdmin(admin.ModelAdmin):
     fields = [
-        'title', 'content', 'views',
+        'title',
+        'content',
+        'views',
     ]
     list_display = ('title', 'created_time', 'views', 'title_slug')
+
+
+class CommentAdmin(admin.ModelAdmin):
+    fields = ['name', 'email', 'post', 'content']
+    list_display = ('name', 'email', 'created_time', 'post', 'content')
 
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(Page, PageAdmin)
+admin.site.register(Comment, CommentAdmin)
