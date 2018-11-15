@@ -8,3 +8,9 @@ Home page:
 ![home](README.assets/home.png)
 
 博客详情页增加评论功能
+
+TODO:
+
+-   [ ] 服务器部署脚本
+-   [ ] 注册功能
+-   [ ] 搜索匹配位置高亮显示
