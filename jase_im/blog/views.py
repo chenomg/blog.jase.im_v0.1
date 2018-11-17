@@ -4,8 +4,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.utils.text import slugify
-from blog.models import Category, Tag, Post, Comment, Page
-from .forms import CommentForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from blog.models import Category, Tag, Post, Comment, Page, UserProfile
+from registration.backends.simple.views import RegistrationView
+from .forms import CommentForm, UserProfileForm, UserForm
 from markdown import markdown, Markdown
 from markdown.extensions.toc import TocExtension
 # from uuslug import slugify
@@ -166,3 +169,20 @@ def search(request):
         results = None
     context = {'results': results, 'query': query}
     return render(request, 'blog/search.html', context=context)
+
+
+@login_required
+def register_profile(request):
+    user = User.objects.get(username=request.user.username)
+    userprofile = UserProfile.objects.filter(user=user)
+    if request.method == 'POST':
+        userform = UserForm(request.POST)
+        print(userform)
+        userprofileform = UserProfileForm(request.POST)
+        print(userprofileform)
+        if userform.is_valid():
+            print('表格有效')
+        else:
+            print('表格无效')
+    context = {'user': user, 'userprofile': userprofile}
+    return render(request, 'blog/register_profile.html', context=context)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Category, Tag, Post, Page, Comment
+from blog.models import Category, Tag, Post, Page, Comment, UserProfile
 
 
 class PostInline(admin.TabularInline):
@@ -45,3 +45,4 @@ admin.site.register(Tag, TagAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(UserProfile)

@@ -28,6 +28,7 @@ urlpatterns = [
         views.post_detail,
         name='post_detail'),
     url(r'^category/', views.category, name='category'),
+    url(r'^register_profile/', views.register_profile, name='register_profile'),
     url(r'^comment_submit/', views.comment_submit, name='comment_submit'),
     url(r'^archive/', views.archive, name='archive'),
     url(

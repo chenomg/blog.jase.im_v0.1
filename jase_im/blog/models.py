@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from uuslug import slugify
 from mdeditor.fields import MDTextField
 
@@ -47,12 +48,13 @@ class Post(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
     title_slug = models.SlugField(blank=True)
     views = models.PositiveIntegerField(default=0)
+
     # likes = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
         self.title_slug = slugify(self.title)
         if not self.excerpt:
-            if len(self.content) <201:
+            if len(self.content) < 201:
                 self.excerpt = self.content[:200]
             else:
                 self.excerpt = self.content[:200] + '...'
@@ -95,3 +97,12 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, primary_key=True)
+    website = models.URLField(blank=True)
+    picture = models.ImageField(upload_to='profile_images', blank=True)
+
+    def __str__(self):
+        return self.user.username

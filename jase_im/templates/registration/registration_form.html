@@ -1,0 +1,17 @@
+{% extends 'blog/base.html' %}
+{% load blog_template_tags %}
+{% load staticfiles %}
+{% block body_block %}
+    <h1>Sign Up Here!</h1>
+    <form action="." method="post" accept-charset="utf-8">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Sign Up"/>
+    </form>
+{% endblock %}
+{% block tag %}
+    {% show_current_tags %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories %}
+{% endblock %}

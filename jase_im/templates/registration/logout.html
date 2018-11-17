@@ -1,0 +1,13 @@
+{% extends 'blog/base.html' %}
+{% load blog_template_tags %}
+{% load staticfiles %}
+{% block body_block %}
+    <h1>Log Out</h1>
+    <p>You are now loged out!</p>
+{% endblock %}
+{% block tag %}
+    {% show_current_tags %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories %}
+{% endblock %}

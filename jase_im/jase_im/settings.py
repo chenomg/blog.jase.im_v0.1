@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'booking',
     'markdown',
     'mdeditor',
+    'registration',
 ]
 
 MIDDLEWARE = [
@@ -179,3 +180,14 @@ MDEDITOR_CONFIGS = {
         True  # Whether to open the sequence diagram function
     }
 }
+
+# 开放注册
+REGISTRATION_OPEN = 'True'
+# 登陆有效时间
+ACCOUNT_ACTIVATION = 7
+# 自动登录
+REGISTRATION_AUTO_LOGIN = True
+# 登陆后跳转地址
+LOGIN_REDIRECT_URL = '/'
+# 登陆地址
+LOGIN_URL = '/accounts/login/'
