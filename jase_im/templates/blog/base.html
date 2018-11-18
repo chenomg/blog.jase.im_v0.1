@@ -41,6 +41,11 @@
           <ul class="navbar-nav ml-auto">
             {% if user.is_authenticated %}
             <li class="nav-item">
+                <a class="nav-item nav-link" href="{% url 'blog:addpost' %}">
+                    <img id='add_post_button' src="{% static 'blog/images/add.png' %}" alt=""/>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-item nav-link" href="{% url 'blog:register_profile' %}">{{ user.username }}</a>
             </li>
             {% endif %}
@@ -91,7 +96,11 @@
                     <div class="row">
                       <div class="col-lg-12">
                         <ul class="list-unstyled mb-0">
-                          <p>&nbsp;&nbsp;&nbsp;&nbsp;Stay Hungry, Stay Foolish.</p>
+                          <p id='id_slogan'>
+                            <a id='a_slogan' href="https://news.stanford.edu/2005/06/14/jobs-061505/" target="_blank">
+                                <strong>Stay Hungry, Stay Foolish.</strong>
+                            </a>
+                          </p>
                         </ul>
                       </div>
                     </div>

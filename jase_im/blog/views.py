@@ -6,9 +6,10 @@ from django.db.models import Q
 from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.views.generic.edit import UpdateView
 from blog.models import Category, Tag, Post, Comment, Page, UserProfile
 from registration.backends.simple.views import RegistrationView
-from .forms import CommentForm, UserProfileForm, UserForm
+from .forms import CommentForm, UserProfileForm, UserUpdateForm, MDEditorModelForm
 from markdown import markdown, Markdown
 from markdown.extensions.toc import TocExtension
 # from uuslug import slugify
@@ -173,16 +174,63 @@ def search(request):
 
 @login_required
 def register_profile(request):
+    """
+    用于展示目前登陆用户的信息,并且可以更新部分信息, 未完成
+    """
     user = User.objects.get(username=request.user.username)
-    userprofile = UserProfile.objects.filter(user=user)
+    userprofile = None if not UserProfile.objects.filter(
+        user=user) else UserProfile.objects.get(user=user)
+    userform = UserUpdateForm({
+        'email': user.email,
+        'website': userprofile.website
+    })
     if request.method == 'POST':
-        userform = UserForm(request.POST)
-        print(userform)
-        userprofileform = UserProfileForm(request.POST)
-        print(userprofileform)
+        userform = UserUpdateForm(request.POST)
         if userform.is_valid():
-            print('表格有效')
+            user.email = userform.cleaned_data['email']
+            user.save()
+        if not userprofile:
+            userprofile = UserProfile(
+                user=user,
+                website=userform.cleaned_data['website'],
+                picture=request.POST.get('picture'))
         else:
-            print('表格无效')
-    context = {'user': user, 'userprofile': userprofile}
+            userprofile.website = userform.cleaned_data['website']
+            picture = request.FILES.get('avator')
+            if picture:
+                userprofile.picture = picture
+        userprofile.save()
+    context = {'user': user, 'userprofile': userprofile, 'userform': userform}
     return render(request, 'blog/register_profile.html', context=context)
+
+
+@login_required
+def myposts(request):
+    pass
+
+
+@login_required
+def edit_post(request):
+    pass
+
+
+@login_required
+def add_post(request):
+    user = User.objects.get(username=request.user.username)
+    post_form = MDEditorModelForm()
+    context = {'post_form': post_form, 'user': user}
+    if request.method == 'POST':
+        form = MDEditorModelForm(request.POST)
+        print(form)
+        if form.is_valid():
+            post = Post()
+            post.title = form.cleaned_data['title']
+            post.author = User.objects.get(username=request.user.username)
+            post.content = form.cleaned_data['content']
+            post.excerpt = form.cleaned_data['excerpt']
+            post.category = Category.objects.get(
+                name=form.cleaned_data['category'])
+            post.save()
+            post.tags = form.cleaned_data['tags']
+            post.save()
+    return render(request, 'blog/add_post.html', context=context)

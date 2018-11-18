@@ -1,0 +1,17 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load blog_template_tags %}
+{% block body_block %}
+    <form action="{% url 'blog:addpost' %}" method="post" accept-charset="utf-8">
+        {% csrf_token %}
+        {{ post_form.media}}
+        {{ post_form.as_p}}
+        <p><input type="submit" name="submit_post" value="Post" id="submit_post"></p>
+    </form>
+{% endblock %}
+{% block tag %}
+    {% show_current_tags is_detail post %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories is_detail post %}
+{% endblock %}

@@ -36,6 +36,21 @@ ul {
 #page_indicator {
   color: #0D123F;
 }
+#id_slogan {
+  text-align: center;
+  font-size: 20px;
+  font-style: italic;
+}
+#a_slogan {
+  color: #000000;
+}
+#avator_show {
+  height: 70px;
+  width: 70px;
+}
+#add_post_button {
+  width: 20px;
+}
 /*.tag-show {*/
   /*list-style-type:  none;*/
 /*}*/

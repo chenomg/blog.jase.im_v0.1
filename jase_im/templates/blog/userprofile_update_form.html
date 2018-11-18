@@ -1,0 +1,52 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load blog_template_tags %}
+
+
+{% block body_block %}
+<form id='register_profile_form' action="{% url 'blog:register_profile'  %}" method="post">
+        {% csrf_token %}
+        <h2>Profile Regsitration</h2>
+        <div >
+            <span>Username:</span>
+            <input type="text" value="{{ user.username }}" name="username" id='username' readonly='value'/>
+        </div>
+        <div>
+            <span>Email:</span>
+            <input type="text" value="{{ user.email }}" name="email" id='email'/>
+        </div>
+        <div>
+            <span>Date-joined:</span>
+            <input type="text" value="{{ user.date_joined }}" readonly='value'/>
+        </div>
+        <div>
+            <span>Password:</span>
+            <input type="password" value="" name="password" id='password' placeholder='********'/>
+        </div>
+        {% if userprofile %}
+        <div>
+            <span>Website:</span>
+            <input type="text" value="{{ userprofile.website }}" name="website"/>
+        </div>
+        <div>
+            <span>Picture:</span>
+            <img id='avator_show' src="{% static userprofile.picture %}" alt="avator"/>
+        </div>
+        {% endif %}
+        <input type="file" name="avator" id="id_avator"/>
+        <button class="btn btn-primary" type="submit" value="Submit">提交变更</button>
+    </form>
+    <form action="register_profile_submit" method="post" accept-charset="utf-8">
+        {% csrf_token %}
+        <h2>Profile Regsitration</h2>
+        {{ form.as_p }}
+        <input type="submit" value="Update"/>
+    </form>
+    <a href="{% url 'blog:index' %}" target="_self">Return to the home page!</a><br />
+{% endblock %}
+{% block tag %}
+    {% show_current_tags %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories %}
+{% endblock %}

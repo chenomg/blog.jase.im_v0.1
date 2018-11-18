@@ -4,7 +4,7 @@
 
 
 {% block body_block %}
-<form id='register_profile_form' action="{% url 'blog:register_profile'  %}" method="post">
+<form id='register_profile_form' action="{% url 'blog:register_profile'  %}" method="post" enctype='multipart/form-data'>
         {% csrf_token %}
         <h2>Profile Regsitration</h2>
         <div >
@@ -12,29 +12,42 @@
             <input type="text" value="{{ user.username }}" name="username" id='username' readonly='value'/>
         </div>
         <div>
-            <span>Email:</span>
-            <input type="text" value="{{ user.email }}" name="email" id='email'/>
-        </div>
-        <div>
             <span>Date-joined:</span>
-            <input type="text" value="{{ user.date_joined }}" readonly='value'/>
+            <input type="text" value="{{ user.date_joined|date:'Y-m-d'}}" readonly='value'/>
         </div>
-        <div>
-            <span>Password:</span>
-            <input type="password" value="" name="password" id='password' placeholder='********'/>
-        </div>
+        {{ userform.as_p }}
+        <!--<div>-->
+            <!--<span>Email:</span>-->
+            <!--<input type="text" value="{{ user.email }}" name="email" id='email'/>-->
+        <!--</div>-->
         {% if userprofile %}
+        <!--<div>-->
+            <!--<span>Website:</span>-->
+            <!--<input type="text" value="{{ userprofile.website }}" name="website"/>-->
+        <!--</div>-->
+        <div>
+            <span>Picture:</span>
+            {% if userprofile.picture %}
+            <img id='avator_show' src="{% static userprofile.picture %}" alt="avator"/>
+            {% else %}
+            <span>无</span>
+            {% endif %}
+        </div>
+        {% else %}
         <div>
             <span>Website:</span>
             <input type="text" value="" name="website"/>
         </div>
         <div>
-            <span>Picture:</span>
-            <img src="{{ userprofile.picture }}" alt="avator"/>
+            <span>Picture: </span>
         </div>
         {% endif %}
+        <input type="file" name="avator" id="id_avator"/>
+        <br>
         <button class="btn btn-primary" type="submit" value="Submit">提交变更</button>
     </form>
+
+    <a href="{% url 'blog:myposts' %}" target="_self">MyPosts</a><br />
     <a href="{% url 'blog:index' %}" target="_self">Return to the home page!</a><br />
 {% endblock %}
 {% block tag %}

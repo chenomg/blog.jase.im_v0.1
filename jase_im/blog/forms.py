@@ -3,7 +3,8 @@
 
 from django import forms
 from django.contrib.auth.models import User
-from .models import Comment, UserProfile
+from mdeditor.fields import MDTextFormField
+from .models import Comment, UserProfile, Post
 
 
 class CommentForm(forms.ModelForm):
@@ -35,15 +36,27 @@ class CommentForm(forms.ModelForm):
             }, ), )
 
 
-class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
+class UserUpdateForm(forms.Form):
+    """
+    用于更新用户信息时检查输入信息是否正确
+    """
+    email = forms.EmailField(required=True)
+    website = forms.URLField(initial="http://", required=False)
 
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['website', 'picture']
+
+
+class MDEditorModelForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = [
+            'title',
+            'excerpt',
+            'category',
+            'tags',
+            'content',
+        ]

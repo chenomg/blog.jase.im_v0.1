@@ -38,7 +38,7 @@ class Tag(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=128)
-    author = models.CharField(max_length=128, default='Jase Chen')
+    author = models.ForeignKey(User)
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     # content = models.TextField()
