@@ -178,8 +178,11 @@ def register_profile(request):
     用于展示目前登陆用户的信息,并且可以更新部分信息, 未完成
     """
     user = User.objects.get(username=request.user.username)
-    userprofile = None if not UserProfile.objects.filter(
-        user=user) else UserProfile.objects.get(user=user)
+    if UserProfile.objects.filter(user=user):
+        userprofile = UserProfile.objects.get(user=user)
+    else:
+        userprofile = UserProfile(user=user)
+        userprofile.save()
     userform = UserUpdateForm({
         'email': user.email,
         'website': userprofile.website
@@ -189,16 +192,10 @@ def register_profile(request):
         if userform.is_valid():
             user.email = userform.cleaned_data['email']
             user.save()
-        if not userprofile:
-            userprofile = UserProfile(
-                user=user,
-                website=userform.cleaned_data['website'],
-                picture=request.POST.get('picture'))
-        else:
             userprofile.website = userform.cleaned_data['website']
-            picture = request.FILES.get('avator')
-            if picture:
-                userprofile.picture = picture
+        picture = request.FILES.get('avator')
+        if picture:
+            userprofile.picture = picture
         userprofile.save()
     context = {'user': user, 'userprofile': userprofile, 'userform': userform}
     return render(request, 'blog/register_profile.html', context=context)
@@ -221,7 +218,7 @@ def add_post(request):
     context = {'post_form': post_form, 'user': user}
     if request.method == 'POST':
         form = MDEditorModelForm(request.POST)
-        print(form)
+        context['post_form'] = form
         if form.is_valid():
             post = Post()
             post.title = form.cleaned_data['title']
@@ -232,5 +229,17 @@ def add_post(request):
                 name=form.cleaned_data['category'])
             post.save()
             post.tags = form.cleaned_data['tags']
+            add_tags = form.cleaned_data['add_tags']
+            if add_tags:
+                ts = [i.strip() for i in add_tags.split(',')]
+                for t in ts:
+                    try:
+                        tag = Tag(name=t)
+                        tag.save()
+                    except Exception as e:
+                        print('tag{}已存在,不需要新建'.format(t))
+                    tag = Tag.objects.get(name=t)
+                    post.tags.add(tag)
             post.save()
+            return HttpResponseRedirect(reverse('blog:index'))
     return render(request, 'blog/add_post.html', context=context)

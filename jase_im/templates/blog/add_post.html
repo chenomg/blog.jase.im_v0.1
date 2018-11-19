@@ -1,4 +1,4 @@
-{% extends 'blog/base.html' %}
+{% extends 'blog/base_clean.html' %}
 {% load staticfiles %}
 {% load blog_template_tags %}
 {% block body_block %}
@@ -6,12 +6,6 @@
         {% csrf_token %}
         {{ post_form.media}}
         {{ post_form.as_p}}
-        <p><input type="submit" name="submit_post" value="Post" id="submit_post"></p>
+        <p><input type="submit" name="submit_post" value="Post" id="submit_post" class='btn btn-primary'></p>
     </form>
-{% endblock %}
-{% block tag %}
-    {% show_current_tags is_detail post %}
-{% endblock %}
-{% block category %}
-    {% show_current_categories is_detail post %}
 {% endblock %}

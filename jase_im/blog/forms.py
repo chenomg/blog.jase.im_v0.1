@@ -50,13 +50,48 @@ class UserProfileForm(forms.ModelForm):
         fields = ['website', 'picture']
 
 
-class MDEditorModelForm(forms.ModelForm):
+class MDEditorModelForm(forms.ModelForm, forms.Form):
+    add_tags = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': '多个标签以","分开',
+                'class': 'form-control col-sm-12 col-md-6',
+            }))
+
     class Meta:
         model = Post
         fields = [
             'title',
             'excerpt',
             'category',
-            'tags',
             'content',
+            'tags',
         ]
+        widgets = {
+            'title':
+            forms.TextInput(
+                attrs={
+                    'id': 'id_title',
+                    'class': 'form-control col-sm-12 col-md-6',
+                    'placeholder': 'Title Input',
+                }),
+            'excerpt':
+            forms.TextInput(
+                attrs={
+                    'id': 'id_excerpt',
+                    'class': 'form-control col-sm-12 col-md-6',
+                    'rows': '3',
+                    'placeholder': 'Excerpt Input',
+                }),
+            'category':
+            forms.Select(attrs={
+                'id': 'id_category',
+                'class': 'form-control col-sm-12 col-md-6',
+            }),
+            'tags':
+            forms.SelectMultiple(attrs={
+                'id': 'id_tags',
+                'class': 'form-control col-sm-12 col-md-6',
+            }),
+        }
