@@ -65,7 +65,7 @@ def index(request):
 
 
 def about(request):
-    page = Page.objects.get(title_slug='about')
+    page = Page.objects.get(slug='about')
     page.views += 1
     page.save()
     page.content = md.convert(page.content)
@@ -74,14 +74,14 @@ def about(request):
     return render(request, 'blog/about.html', context=context_dic)
 
 
-def post_detail(request, post_title_slug):
-    post = get_object_or_404(Post, title_slug=post_title_slug)
+def post_detail(request, slug):
+    post = get_object_or_404(Post, slug=slug)
     post.views = post.views + 1
     post.save()
     post.content = md.convert(post.content)
     # post.content = markdown(post.content, extensions=exts)
     post.toc = md.toc
-    comments = Post.objects.get(title_slug=post_title_slug).comment_set.all()
+    comments = post.comment_set.all()
     tags = post.tags.all().order_by('slug')
     context = {
         'post': post,
@@ -105,8 +105,8 @@ def post_detail(request, post_title_slug):
 
 
 def comment_submit(request):
-    post_title_slug = request.POST['post_title_slug']
-    post = get_object_or_404(Post, title_slug=post_title_slug)
+    post_slug = request.POST['post_slug']
+    post = get_object_or_404(Post, slug=post_slug)
     if request.method == 'POST':
         form = CommentForm(request.POST)
         response_data = {
@@ -203,12 +203,18 @@ def register_profile(request):
 
 @login_required
 def myposts(request):
-    pass
+    user = User.objects.get(username=request.user.username)
+    myposts = Post.objects.filter(author=user)
+    context = {'posts': myposts}
+    return render(request, 'blog/my_posts.html', context=context)
 
 
-@login_required
-def edit_post(request):
-    pass
+# @login_required
+class Update_Post(UpdateView):
+    model = Post
+    form_class = MDEditorModelForm
+    success_url = '/'
+    template_name_suffix = '_update_form'
 
 
 @login_required

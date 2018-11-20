@@ -2,7 +2,7 @@
   {% if most_viewed_posts %}
     {% for post in most_viewed_posts %}
       <li class='tag-show'>
-        <a href="{% url 'blog:post_detail' post.title_slug %}" title='{{ post.title }}'>{{ post.sidebar_name }}</a>
+        <a href="{% url 'blog:post_detail' post.slug %}" title='{{ post.title }}'>{{ post.sidebar_name }}</a>
       </li>
     {% endfor %}
   {% else %}

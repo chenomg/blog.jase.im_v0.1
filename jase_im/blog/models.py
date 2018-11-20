@@ -2,6 +2,17 @@ from django.db import models
 from django.contrib.auth.models import User
 from uuslug import slugify
 from mdeditor.fields import MDTextField
+from random import choice
+
+
+def gene_rand_code(digital=8):
+    S = [chr(i) for i in range(48, 58)]
+    S += [chr(i) for i in range(97, 123)]
+    S += [chr(i) for i in range(65, 91)]
+    res = []
+    for i in range(digital):
+        res.append(choice(S))
+    return ''.join(res)
 
 
 class Category(models.Model):
@@ -46,13 +57,18 @@ class Post(models.Model):
     excerpt = models.CharField(max_length=300, blank=True)
     category = models.ForeignKey(Category)
     tags = models.ManyToManyField(Tag, blank=True)
-    title_slug = models.SlugField(blank=True)
+    slug = models.SlugField()
     views = models.PositiveIntegerField(default=0)
 
     # likes = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
-        self.title_slug = slugify(self.title)
+        if not self.slug:
+            rcd = gene_rand_code()
+            slg_t = slugify(self.title) + '-' + rcd
+            while Post.objects.filter(slug=slg_t):
+                rcd = gene_rand_code()
+            self.slug = slg_t
         if not self.excerpt:
             if len(self.content) < 201:
                 self.excerpt = self.content[:200]
@@ -74,11 +90,11 @@ class Page(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     content = MDTextField()
-    title_slug = models.SlugField(blank=True)
+    slug = models.SlugField(blank=True)
     views = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
-        self.title_slug = slugify(self.title)
+        self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):

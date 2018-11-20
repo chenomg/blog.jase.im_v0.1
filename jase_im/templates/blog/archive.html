@@ -13,7 +13,7 @@
                     <div class='archive-posts'>
                         {{ post.created_time }}
                         <h5>
-                            <a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a>
+                            <a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a>
                         </h5>
                     </div>
                     {% endif %}

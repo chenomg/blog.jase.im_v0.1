@@ -28,7 +28,7 @@
                     {% for post in posts %}
                         {% if post.category == category %}
                             <h5>
-                                <a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a>
+                                <a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a>
                             </h5>
                         {% endif %}
                     {% endfor %}

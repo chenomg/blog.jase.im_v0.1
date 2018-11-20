@@ -1,0 +1,29 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load blog_template_tags %}
+{% block body_block %}
+    <div>
+        {% if posts %}
+        <h2>我的文章:</h2>
+        <a href="{% url 'blog:register_profile' %}" target="_self">返回我的主页</a>
+        <ul id='myposts'>
+            {% for post in posts %}
+            <li>
+                <h3>
+                    <a href="{% url 'blog:post_detail' post.slug %}" >&nbsp{{ post.title }}&nbsp</a>
+                    <span><a href="{% url 'blog:update_post' post.slug %}" target="_self">编辑</a></span>
+                </h3>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <strong>我目前还没有发布任何文章。。。</strong>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block tag %}
+    {% show_current_tags %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories %}
+{% endblock %}

@@ -23,7 +23,7 @@ class PostAdmin(admin.ModelAdmin):
         'title', 'content', 'excerpt', 'category', 'views', 'author', 'tags'
     ]
     list_display = ('title', 'created_time', 'category', 'views', 'author',
-                    'title_slug')
+                    'slug')
 
 
 class PageAdmin(admin.ModelAdmin):
@@ -32,7 +32,7 @@ class PageAdmin(admin.ModelAdmin):
         'content',
         'views',
     ]
-    list_display = ('title', 'created_time', 'views', 'title_slug')
+    list_display = ('title', 'created_time', 'views', 'slug')
 
 
 class CommentAdmin(admin.ModelAdmin):
