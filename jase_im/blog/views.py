@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
 from blog.models import Category, Tag, Post, Comment, Page, UserProfile
@@ -65,7 +66,7 @@ def index(request):
 
 
 def about(request):
-    page = Page.objects.get(slug='about')
+    page = get_object_or_404(Page, slug='about')
     page.views += 1
     page.save()
     page.content = md.convert(page.content)
@@ -209,8 +210,7 @@ def myposts(request):
     return render(request, 'blog/my_posts.html', context=context)
 
 
-# @login_required
-class Update_Post(UpdateView):
+class Update_Post(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = MDEditorModelForm
     success_url = '/'
@@ -249,3 +249,21 @@ def add_post(request):
             post.save()
             return HttpResponseRedirect(reverse('blog:index'))
     return render(request, 'blog/add_post.html', context=context)
+
+
+def user_show(request, username):
+    user = get_object_or_404(User, username=username)
+    userprofile = get_object_or_404(UserProfile, user=user)
+    posts = Post.objects.filter(author=user)
+    context = {'user': user, 'posts': posts, 'userprofile': userprofile}
+    return render(request, 'blog/user_show.html', context=context)
+
+
+def page_not_found(request):
+    page = Page.objects.get(slug='404')
+    page.views += 1
+    page.save()
+    page.content = md.convert(page.content)
+    page.toc = md.toc
+    context_dic = {'page': page}
+    return render(request, 'blog/404.html', {'page': page})

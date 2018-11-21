@@ -70,10 +70,10 @@ class Post(models.Model):
                 rcd = gene_rand_code()
             self.slug = slg_t
         if not self.excerpt:
-            if len(self.content) < 201:
-                self.excerpt = self.content[:200]
+            if len(self.content) < 301:
+                self.excerpt = self.content[:300]
             else:
-                self.excerpt = self.content[:200] + '...'
+                self.excerpt = self.content[:300] + '...'
         if not self.author:
             self.author = 'Unknow Author'
         super().save(*args, **kwargs)

@@ -1,0 +1,57 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load blog_template_tags %}
+{% block body_block %}
+    <div>
+        <h2>User Profile:</h2>
+        <div class='row'>
+            <div class='col-lg-4 portfolio-item'>
+            {% if userprofile %}
+                {% if userprofile.picture %}
+                <img id='avator_show' src="{% static userprofile.picture %}" alt="avator"/>
+                {% endif %}
+            {% endif %}
+            </div>
+            <div class='col-lg-8 portfolio-item'>
+                <div>
+                    <span>Username: {{ user.username }}</span>
+                </div>
+                <div>
+                    <span>Date-joined: {{ user.date_joined|date:'Y-m-d' }}</span>
+                </div>
+                {% if userprofile %}
+                <div>
+                    <span>Website: <a href="{{ userprofile.website }}" target="_blank">{{ userprofile.website }}</a></span>
+                </div>
+                {% else %}
+                <div>
+                    <span>Website: 无</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+
+    <div>
+        {% if user %}
+        <h2>Posts posted by <strong>{{ user.username }}</strong> :</h2>
+            <ul>
+                {% for post in posts %}
+                    <h4><a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a></h4>
+                    <!--<p>{{ post.content|safe }}</p>-->
+                {% endfor %}
+            </ul>
+        {% else %}
+            There are no posts posted by: <strong>{{ user.username }}</strong>.
+        {% endif %}
+    </div>
+{% endblock %}
+{% block tag %}
+    {% show_current_tags %}
+{% endblock %}
+{% block category %}
+    {% show_current_categories %}
+{% endblock %}

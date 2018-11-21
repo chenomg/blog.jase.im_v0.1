@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
-    'booking',
     'markdown',
     'mdeditor',
     'registration',
@@ -147,7 +146,7 @@ MDEDITOR_CONFIGS = {
         'width':
         '100% ',  # Custom edit box width
         'heigth':
-        600,  # Custom edit box height
+        500,  # Custom edit box height
         'toolbar': [
             "undo", "redo", "|", "bold", "del", "italic", "quote", "ucwords",
             "uppercase", "lowercase", "|", "h1", "h2", "h3", "h5", "h6", "|",

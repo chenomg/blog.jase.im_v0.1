@@ -7,7 +7,7 @@
         <h3>Posts with tag: <strong>{{ tag.name }}</strong></h3>
             <ul>
                 {% for post in posts %}
-                    <h4><a href="{% url 'blog:post_detail' post.title_slug  %}" >{{ post.title }}</a></h4>
+                    <h4><a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a></h4>
                     <p>{{ post.content|safe }}</p>
                 {% endfor %}
             </ul>

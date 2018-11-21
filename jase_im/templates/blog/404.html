@@ -1,0 +1,6 @@
+{% extends 'blog/base_clean.html' %}
+{% load blog_template_tags %}
+{% load staticfiles %}
+{% block body_block %}
+    {{ page.content|safe }}
+{% endblock %}

@@ -16,15 +16,7 @@
             <input type="text" value="{{ user.date_joined|date:'Y-m-d'}}" readonly='value'/>
         </div>
         {{ userform.as_p }}
-        <!--<div>-->
-            <!--<span>Email:</span>-->
-            <!--<input type="text" value="{{ user.email }}" name="email" id='email'/>-->
-        <!--</div>-->
         {% if userprofile %}
-        <!--<div>-->
-            <!--<span>Website:</span>-->
-            <!--<input type="text" value="{{ userprofile.website }}" name="website"/>-->
-        <!--</div>-->
         <div>
             <span>Picture:</span>
             {% if userprofile.picture %}

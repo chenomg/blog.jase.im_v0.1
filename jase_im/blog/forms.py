@@ -95,3 +95,7 @@ class MDEditorModelForm(forms.ModelForm, forms.Form):
                 'class': 'form-control col-sm-12 col-md-6',
             }),
         }
+        labels = {
+            'excerpt': 'Excerpt (Optional)',
+            'tags': 'Tags (Optional)',
+        }

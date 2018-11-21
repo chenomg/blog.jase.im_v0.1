@@ -4,8 +4,6 @@
 {% block body_block %}
     <form action="{% url 'blog:update_post' post.slug %}" method="post" accept-charset="utf-8">
         {% csrf_token %}
-        <!--{{ post_form.media}}-->
-        <!--{{ post_form.as_p}}-->
         {{ form.media }}
         {{ form.as_p }}
         <p><input type="submit" name="submit_post" value="Post" id="submit_post" class='btn btn-primary'></p>

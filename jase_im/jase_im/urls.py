@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
+from django.conf.urls import url, include, handler404
 from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
 from django.contrib import admin
@@ -21,11 +21,11 @@ from blog import views
 from django.conf import settings
 from django.views.static import serve
 
+handler404 = views.page_not_found
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/blog/')),
     url(r'^admin/', admin.site.urls),
     url(r'^blog/', include('blog.urls')),
-    url(r'^booking/', include('booking.urls')),
     url(r'^mdeditor/', include('mdeditor.urls')),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^media/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),

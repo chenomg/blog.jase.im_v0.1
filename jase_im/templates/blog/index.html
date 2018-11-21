@@ -14,7 +14,7 @@
                 <a href="{% url 'blog:post_detail' post.slug  %}" class="btn btn-info">Read More &rarr;</a>
             </div>
             <div class="card-footer text-muted">
-                Posted on <time>{{ post.created_time|date:'M d, Y' }}</time>&nbsp by {{ post.author }}
+                Posted on <time>{{ post.created_time|date:'M d, Y' }}</time>&nbsp by <a href="{% url 'blog:user_show' user.username %}">{{ post.author }}</a>
                 <span>&nbsp- views:{{ post.views }}</span>
             </div>
         </div>
