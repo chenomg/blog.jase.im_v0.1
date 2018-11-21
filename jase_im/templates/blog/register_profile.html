@@ -20,7 +20,7 @@
         <div>
             <span>Picture:</span>
             {% if userprofile.picture %}
-            <img id='avator_show' src="{% static userprofile.picture %}" alt="avator"/>
+            <img id='avator_show' src="/media/{{ userprofile.picture }}" alt="avator"/>
             {% else %}
             <span>无</span>
             {% endif %}
