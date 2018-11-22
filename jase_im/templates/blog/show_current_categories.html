@@ -1,6 +1,6 @@
 {% if is_detail %}
   <li class='tag-show'>
-      <a href="{% url 'blog:category' %}/#{{ categories.name }}">{{ categories.name }}</a>
+      <a href="{% url 'blog:category' %}#{{ categories.name }}">{{ categories.name }}</a>
   </li>
 {% else %}
   {% if categories %}
@@ -9,7 +9,7 @@
       <ul>
         {% for cat in pre_half %}
         <li class='tag-show'>
-          <a href="{% url 'blog:category' %}/#{{ cat.name }}">{{ cat.name }}</a>
+          <a href="{% url 'blog:category' %}#{{ cat.name }}">{{ cat.name }}</a>
         </li>
         {% endfor %}
       </ul>
@@ -20,7 +20,7 @@
       <ul>
         {% for cat in lst_half %}
         <li class='tag-show'>
-          <a href="{% url 'blog:category' %}/#{{ cat.name }}">{{ cat.name }}</a>
+          <a href="{% url 'blog:category' %}#{{ cat.name }}">{{ cat.name }}</a>
         </li>
         {% endfor %}
       </ul>
