@@ -8,7 +8,7 @@
             <div class='col-lg-4 portfolio-item'>
             {% if userprofile %}
                 {% if userprofile.picture %}
-                <img id='avator_show' src="{% static userprofile.picture %}" alt="avator"/>
+                <img id='avator_show' src="/media/{{ userprofile.picture }}" alt="avator"/>
                 {% endif %}
             {% endif %}
             </div>
