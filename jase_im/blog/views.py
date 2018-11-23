@@ -28,7 +28,8 @@ def index(request):
     query = request.GET.get('query')
     if query:
         posts = Post.objects.filter(
-            Q(title__icontains=query) | Q(content__icontains=query))
+            Q(title__icontains=query)
+            | Q(content__icontains=query)).order_by('-created_time')
     else:
         posts = Post.objects.all().order_by('-created_time')
     for post in posts:
@@ -175,8 +176,8 @@ def search(request):
 
 @login_required
 def register_profile(request):
-    """
-    用于展示目前登陆用户的信息,并且可以更新部分信息, 未完成
+    """
+    用于展示目前登陆用户的信息,并且可以更新部分信息, 未完成
     """
     user = User.objects.get(username=request.user.username)
     if UserProfile.objects.filter(user=user):
