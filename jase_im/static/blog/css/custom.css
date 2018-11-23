@@ -7,9 +7,9 @@ body {
     padding-top: 56px;
   }
 }
-#content-posts {
-  border-right: 1px solid;
-}
+/*#content-posts {*/
+  /*border-right: 1px solid;*/
+/*}*/
 #footer {
   text-align: center;
 }
