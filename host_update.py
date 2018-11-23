@@ -9,11 +9,11 @@ import json
     "hostname": "hostname/ip",
     "port": port,
     "username": "username",
-    "password": "password"
+    "password": "password",
+    "dir": "django_dir"
 }
 """
 KEY_FILE = 'host.key'
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def get_config(key_file=KEY_FILE):
@@ -23,11 +23,12 @@ def get_config(key_file=KEY_FILE):
 
 
 key = get_config()
-cmd = 'cd ' + PROJECT_DIR + ';rm -r collected_static;git fetch;git reset --hard origin/master;git pull;python3 manage.py collectstatic;service apache2 restart'
+cmd = 'cd ' + key['dir'] + ';rm -r collected_static;git fetch;git reset --hard origin/master;git pull;python3 manage.py collectstatic;service apache2 restart'
 
 client = paramiko.SSHClient()
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 client.load_system_host_keys()
-client.connect(key.hostname, key.port, key.username, key.password)
+client.connect(key['hostname'], key['port'], key['username'], key['password'])
 stdin, stdout, stderr = client.exec_command(cmd)
 print(stdout.read().decode('utf-8'))
+print('Process Done')
