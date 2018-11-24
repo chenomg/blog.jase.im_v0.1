@@ -28,7 +28,9 @@ cmd = 'cd ' + config['dir'] + ';\
     git fetch;\
     git reset --hard origin/master;\
     git pull;\
+    cd ..;\
     pip3 install -r requirements.txt;\
+    cd jase_im;\
     python3 manage.py makemigrations;\
     python3 manage.py migrate;\
     python3 manage.py collectstatic;\
