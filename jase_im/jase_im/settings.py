@@ -30,7 +30,7 @@ DJANGO_STATIC = os.path.join(
 SECRET_KEY = 'y+o(b=flohs@l67vmw06om4xxka2p6!ee8be*pz$%+y#2x16b4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '.jase.im',
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'markdown',
     'mdeditor',
     'registration',
+    'google_analytics',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +63,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+GOOGLE_ANALYTICS = {
+    'google_analytics_id': 'UA-119028437-1',
+}
 
 ROOT_URLCONF = 'jase_im.urls'
 

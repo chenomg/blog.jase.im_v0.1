@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^blog/', include('blog.urls')),
     url(r'^mdeditor/', include('mdeditor.urls')),
+    url(r'^djga/', include('google_analytics.urls')),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^media/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
 ]

@@ -22,13 +22,22 @@ def get_config(key_file=KEY_FILE):
     return _key
 
 
-key = get_config()
-cmd = 'cd ' + key['dir'] + ';rm -r collected_static;git fetch;git reset --hard origin/master;git pull;python3 manage.py collectstatic;service apache2 restart'
+config = get_config()
+cmd = 'cd ' + config['dir'] + ';\
+    rm -r collected_static;\
+    git fetch;\
+    git reset --hard origin/master;\
+    git pull;\
+    pip3 install -r requirements.txt;\
+    python3 manage.py makemigrations;\
+    python3 manage.py migrate;\
+    python3 manage.py collectstatic;\
+    service apache2 restart'
 
 client = paramiko.SSHClient()
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 client.load_system_host_keys()
-client.connect(key['hostname'], key['port'], key['username'], key['password'])
+client.connect(config['hostname'], config['port'], config['username'], config['password'])
 stdin, stdout, stderr = client.exec_command(cmd)
 print(stdout.read().decode('utf-8'))
 print('Process Done')

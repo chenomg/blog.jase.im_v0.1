@@ -5,3 +5,4 @@ markdown
 django-mdeditor
 pygments
 django-registration-redux
+django-google-analytics-app

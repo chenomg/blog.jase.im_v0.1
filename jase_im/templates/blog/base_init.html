@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load staticfiles %}
 {% load blog_template_tags %}
+{% load google_analytics_tags %}
 
 <html lang="zh-cn">
   <head>
@@ -28,6 +29,9 @@
     </title>
   </head>
   <body>
+    <div style='display:none'>
+        <img src="{% google_analytics %}" width='0' height='0'/>
+    </div>
     <!--<body bgcolor="#000000">-->
     <body style="background-image:url({% static '/blog/images/background.png' %});">
     <!-- Navigation -->

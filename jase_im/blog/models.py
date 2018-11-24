@@ -86,6 +86,9 @@ class Post(models.Model):
 
 
 class Page(models.Model):
+    """
+    用于网站相关页面的显示, 如about, 404等
+    """
     title = models.CharField(max_length=128)
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
@@ -122,3 +125,16 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Vistor(models.Model):
+    """
+    记录网站来访者信息,暂未使用
+    """
+    ip = models.GenericIPAddressField()
+    agent = models.TextField()
+    visit_time = models.TimeField()
+    visitor_position = models.TextField()
+
+    def __str__(self):
+        return self.ip
