@@ -36,11 +36,10 @@
         {% endif %}
         <input type="file" name="avator" id="id_avator"/>
         <br>
+        <br>
         <button class="btn btn-primary" type="submit" value="Submit">提交变更</button>
     </form>
 
-    <a href="{% url 'blog:myposts' %}" target="_self">MyPosts</a><br />
-    <a href="{% url 'blog:index' %}" target="_self">Return to the home page!</a><br />
 {% endblock %}
 {% block tag %}
     {% show_current_tags %}

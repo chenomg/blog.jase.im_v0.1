@@ -76,3 +76,8 @@ ul {
   font-size: 18px;
   font-style: italic;
 }
+#post_update {
+  font-style: italic;
+  font-size: 12px;
+  color: #000000;
+}

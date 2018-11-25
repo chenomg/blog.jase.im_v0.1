@@ -28,6 +28,8 @@
                     <span>Website: 无</span>
                 </div>
                 {% endif %}
+                <br>
+                <a class='btn btn-primary' href="{% url 'blog:register_profile' %}" target="_self">变更</a>
             </div>
         </div>
     </div>
@@ -40,8 +42,9 @@
         <h2>Posts posted by <strong>{{ user.username }}</strong> :</h2>
             <ul>
                 {% for post in posts %}
-                    <h4><a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a></h4>
-                    <!--<p>{{ post.content|safe }}</p>-->
+                    <h4><a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a>
+                    <a id='post_update' href="{% url 'blog:update_post' post.slug %}" target="_self">编辑</a>
+                    </h4>
                 {% endfor %}
             </ul>
         {% else %}

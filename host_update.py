@@ -4,13 +4,13 @@ import os
 import paramiko
 import json
 """
-(host.key) config sample
+(KEY_FILE: host.key) config sample
 {
     "hostname": "hostname/ip",
     "port": port,
     "username": "username",
     "password": "password",
-    "dir": "django_dir"
+    "dir": "django_project_dir"
 }
 """
 KEY_FILE = 'host.key'

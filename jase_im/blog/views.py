@@ -176,8 +176,8 @@ def search(request):
 
 @login_required
 def register_profile(request):
-    """
-    用于展示目前登陆用户的信息,并且可以更新部分信息, 未完成
+    """
+    用于展示目前登陆用户的信息,并且可以更新部分信息, 未完成
     """
     user = User.objects.get(username=request.user.username)
     if UserProfile.objects.filter(user=user):
@@ -206,7 +206,7 @@ def register_profile(request):
 @login_required
 def myposts(request):
     user = User.objects.get(username=request.user.username)
-    myposts = Post.objects.filter(author=user)
+    myposts = Post.objects.filter(author=user).order_by('-created_time')
     context = {'posts': myposts}
     return render(request, 'blog/my_posts.html', context=context)
 
@@ -255,7 +255,7 @@ def add_post(request):
 def user_show(request, username):
     user = get_object_or_404(User, username=username)
     userprofile = get_object_or_404(UserProfile, user=user)
-    posts = Post.objects.filter(author=user)
+    posts = Post.objects.filter(author=user).order_by('-created_time')
     context = {'user': user, 'posts': posts, 'userprofile': userprofile}
     return render(request, 'blog/user_show.html', context=context)
 
