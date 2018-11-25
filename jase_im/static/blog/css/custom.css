@@ -1,15 +1,33 @@
 body {
-  padding-top: 54px;
+  margin-top: 66px;
+}
+/*#toc {*/
+  /*padding-top: 66px;*/
+/*}*/
+nav[data-toggle='toc'] {
+  top: 66px;
 }
 
-@media (min-width: 992px) {
-  body {
-    padding-top: 56px;
+/* small screens */
+@media (max-width: 768px) {
+  /* override stickyness so that the navigation does not follow scrolling */
+  nav[data-toggle='toc'] {
+    margin-bottom: 42px;
+    position: static;
   }
+
+  /* PICK ONE */
+  /* don't expand nested items, which pushes down the rest of the page when navigating */
+  nav[data-toggle='toc'] .nav .active .nav {
+    display: none;
+  }
+  /* alternatively, if you *do* want the second-level navigation to be shown (as seen on this page on mobile), use this */
+  /*
+  nav[data-toggle='toc'] .nav .nav {
+    display: block;
+  }
+  */
 }
-/*#content-posts {*/
-  /*border-right: 1px solid;*/
-/*}*/
 #footer {
   text-align: center;
 }
@@ -51,9 +69,10 @@ ul {
 #add_post_button {
   width: 20px;
 }
-/*.tag-show {*/
-  /*list-style-type:  none;*/
-/*}*/
-
 :target{
   padding-top:64px;
+}
+#menu {
+  font-size: 18px;
+  font-style: italic;
+}

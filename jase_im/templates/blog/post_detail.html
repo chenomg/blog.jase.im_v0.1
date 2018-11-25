@@ -1,6 +1,9 @@
-{% extends 'blog/base.html' %}
+{% extends 'blog/base_clean.html' %}
 {% load staticfiles %}
 {% load blog_template_tags %}
+{% block toc %}
+    {{ post.toc|safe }}
+{% endblock %}
 {% block body_block %}
     {% if post %}
       <h1 class='mt-4'>{{ post.title }}</h1>
@@ -8,8 +11,6 @@
       <p class="lead">
       by <a href="{% url 'blog:user_show' post.author.username %}">{{ post.author }}</a>
       </p>
-
-      <hr>
 
       <!-- Date/Time -->
       <p>发表于: {{ post.created_time|date:' m月 d日, Y年' }}
@@ -28,9 +29,6 @@
 
       <!--文章正文-->
       {{ post.content|safe }}
-      <div>
-          {{ post.toc|safe }}
-      </div>
     {% else %}
       There is no such post.
     {% endif %}
