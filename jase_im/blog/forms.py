@@ -3,6 +3,7 @@
 
 from django import forms
 from django.contrib.auth.models import User
+# from django.utils.datastructures import SortedDict
 from mdeditor.fields import MDTextFormField
 from .models import Comment, UserProfile, Post
 
@@ -63,10 +64,11 @@ class MDEditorModelForm(forms.ModelForm, forms.Form):
         model = Post
         fields = [
             'title',
-            'excerpt',
             'category',
-            'content',
             'tags',
+            'add_tags',
+            'excerpt',
+            'content',
         ]
         widgets = {
             'title':

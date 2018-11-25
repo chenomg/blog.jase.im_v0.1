@@ -3,8 +3,20 @@
 {% load blog_template_tags %}
 {% load blog_template_tags %}
 {% block base %}
-    <div class="col-sm-offset-3 col-md-offset-2 main">
-        {% block body_block %}
-        {% endblock %}
+<div class="row">
+    <!-- sidebar, which will move to the top on a small screen -->
+    <div class="col-sm-3">
+        <nav id="toc" data-toggle="toc" class="sticky-top">
+            {% block toc %}
+            {% endblock %}
+        </nav>
     </div>
+    <!-- main content area -->
+    <div class="col-sm-8">
+        <div class="col-sm-offset-3 col-md-offset-2 main">
+            {% block body_block %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
 {% endblock %}
