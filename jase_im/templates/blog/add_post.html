@@ -2,11 +2,16 @@
 {% load staticfiles %}
 {% load blog_template_tags %}
 {% block body_block %}
-    <form action="{% url 'blog:addpost' %}" method="post" accept-charset="utf-8">
-        {% csrf_token %}
-        <input type="hidden" value="{{ post.slug }}" name="slug" id="id_slug"/>
-        {{ post_form.media}}
-        {{ post_form.as_p}}
-        <p><input type="submit" name="update_post" value="Update" id="update_post" class='btn btn-primary'></p>
-    </form>
+    <!-- main content area -->
+    <div class="col-sm-12">
+        <div class="col-sm-offset-3 col-md-offset-2 main">
+            <form action="{% url 'blog:addpost' %}" method="post" accept-charset="utf-8">
+                {% csrf_token %}
+                <input type="hidden" value="{{ post.slug }}" name="slug" id="id_slug"/>
+                {{ post_form.media}}
+                {{ post_form.as_p}}
+                <p><input type="submit" name="update_post" value="Update" id="update_post" class='btn btn-primary'></p>
+            </form>
+        </div>
+    </div>
 {% endblock %}

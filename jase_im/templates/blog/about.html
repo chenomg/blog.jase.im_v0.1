@@ -2,8 +2,18 @@
 {% load blog_template_tags %}
 {% load staticfiles %}
 {% block body_block %}
-    {{ page.content|safe }}
+    <!-- main content area -->
+    <div class="col-sm-8">
+        <div class="col-sm-offset-3 col-md-offset-2 main">
+            {{ page.content|safe }}
+        </div>
+    </div>
 {% endblock %}
 {% block toc %}
-    {{ page.toc|safe }}
+    <!-- sidebar, which will move to the top on a small screen -->
+    <div class="col-sm-3">
+        <nav id="toc" data-toggle="toc" class="sticky-top">
+        {{ page.toc|safe }}
+        </nav>
+    </div>
 {% endblock %}

@@ -2,10 +2,15 @@
 {% load staticfiles %}
 {% load blog_template_tags %}
 {% block body_block %}
-    <form action="{% url 'blog:update_post' post.slug %}" method="post" accept-charset="utf-8">
-        {% csrf_token %}
-        {{ form.media }}
-        {{ form.as_p }}
-        <p><input type="submit" name="submit_post" value="Post" id="submit_post" class='btn btn-primary'></p>
-    </form>
+    <!-- main content area -->
+    <div class="col-sm-12">
+        <div class="col-sm-offset-3 col-md-offset-2 main">
+            <form action="{% url 'blog:update_post' post.slug %}" method="post" accept-charset="utf-8">
+                {% csrf_token %}
+                {{ form.media }}
+                {{ form.as_p }}
+                <p><input type="submit" name="submit_post" value="发布" id="submit_post" class='btn btn-primary'></p>
+            </form>
+        </div>
+    </div>
 {% endblock %}

@@ -2,98 +2,108 @@
 {% load staticfiles %}
 {% load blog_template_tags %}
 {% block toc %}
-    {{ post.toc|safe }}
+    <!-- sidebar, which will move to the top on a small screen -->
+    <div class="col-sm-3">
+        <nav id="toc" data-toggle="toc" class="sticky-top">
+        {{ post.toc|safe }}
+        </nav>
+    </div>
 {% endblock %}
 {% block body_block %}
-    {% if post %}
-      <h1 class='mt-4'>{{ post.title }}</h1>
-      <!-- Author -->
-      <p class="lead">
-      by <a href="{% url 'blog:user_show' post.author.username %}">{{ post.author }}</a>
-      </p>
+    <!-- main content area -->
+    <div class="col-sm-8">
+        <div class="col-sm-offset-3 col-md-offset-2 main">
+            {% if post %}
+            <h1 class='mt-4'>{{ post.title }}</h1>
+            <!-- Author -->
+            <p class="lead">
+            by <a href="{% url 'blog:user_show' post.author.username %}">{{ post.author }}</a>
+            </p>
 
-      <!-- Date/Time -->
-      <p>发表于: {{ post.created_time|date:' m月 d日, Y年' }}
-      <span>|&nbsp分类:<a href="{% url 'blog:category' %}" >{{ post.category }}</a>&nbsp|&nbsp标签:
-      {% if tags %}
-        {% for t in tags %}
-          <span><a href="{% url 'blog:tag_show' t.slug %}" >{{ t }}</a></span>
-        {% endfor %}
-      {% else %}
-        无
-      {% endif %}
-      </span>
-      </p>
-
-      <hr>
-
-      <!--文章正文-->
-      {{ post.content|safe }}
-    {% else %}
-      There is no such post.
-    {% endif %}
-
-    <br>
-    <hr>
-    <br>
-
-    <!--评论展示区-->
-    <div>
-      <h3>Comments:</h3>
-      <ul id='comments-show'>
-      {% if comments %}
-        {% for comment in comments %}
-        <li>
-          <div class="media mb-4">
-            <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-            <div class="media-body">
-              <!--<h5 class="mt-0">{{ comment.name }}</h5>-->
-              <strong>{{ comment.name }}</strong> 发表于:&nbsp{{ comment.created_time|date:'M d, Y' }}
-              <p>{{ comment.content }}</p>
-            </div>
-          </div>
-        </li>
-        {% endfor %}
-      {% else %}
-        <li>
-          <strong id='waitting-for-comment'>欢迎发表评论~~</strong>
-        </li>
-      {% endif %}
-      </ul>
-
-      <!--发表评论-->
-      <div class="card my-4">
-        <h5 class="card-header">Leave a Comment:</h5>
-        <div class="card-body">
-            <form method='post' id='comment_submit' accept-charset="utf-8">
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-            {% if user.is_authenticated %}
-                <input type="hidden" value="{{ user.username }}" name="name" id="username"/>
-                <input type="hidden" value="{{ user.email }}" name="email" id="email"/>
+            <!-- Date/Time -->
+            <p>发表于: {{ post.created_time|date:' m月 d日, Y年' }}
+            <span>|&nbsp分类:<a href="{% url 'blog:category' %}" >{{ post.category }}</a>&nbsp|&nbsp标签:
+            {% if tags %}
+                {% for t in tags %}
+                <span><a href="{% url 'blog:tag_show' t.slug %}" >{{ t }}</a></span>
+                {% endfor %}
             {% else %}
-                <div class="form-group">
-                {{ form.name.errors }}
-                <label for="{{ form.name.id_for_label }}">用户名：</label>
-                {{ form.name }}
-                {{ form.email.errors }}
-                <label for="{{ form.email.id_for_label }}">&nbspE-mail：</label>
-                {{ form.email }}
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                </div>
+                无
             {% endif %}
-                <div class="form-group">
-                {{ form.content.errors }}
-                <label for="{{ form.comment.id_for_label }}">内容：</label>
-                <br>
-                {{ form.content }}
+            </span>
+            </p>
+
+            <hr>
+
+            <!--文章正文-->
+            {{ post.content|safe }}
+            {% else %}
+            There is no such post.
+            {% endif %}
+
+            <br>
+            <hr>
+            <br>
+
+            <!--评论展示区-->
+            <div>
+                <h3>Comments:</h3>
+                <ul id='comments-show'>
+                {% if comments %}
+                    {% for comment in comments %}
+                    <li>
+                        <div class="media mb-4">
+                            <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+                            <div class="media-body">
+                                <!--<h5 class="mt-0">{{ comment.name }}</h5>-->
+                                <strong>{{ comment.name }}</strong> 发表于:&nbsp{{ comment.created_time|date:'M d, Y' }}
+                                <p>{{ comment.content }}</p>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <li>
+                        <strong id='waitting-for-comment'>欢迎发表评论~~</strong>
+                    </li>
+                {% endif %}
+                </ul>
+            </div>
+
+            <!--发表评论-->
+            <div class="card my-4">
+                <h5 class="card-header">Leave a Comment:</h5>
+                <div class="card-body">
+                    <form method='post' id='comment_submit' accept-charset="utf-8">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        {% if user.is_authenticated %}
+                            <input type="hidden" value="{{ user.username }}" name="name" id="username"/>
+                            <input type="hidden" value="{{ user.email }}" name="email" id="email"/>
+                        {% else %}
+                            <div class="form-group">
+                            {{ form.name.errors }}
+                            <label for="{{ form.name.id_for_label }}">用户名：</label>
+                            {{ form.name }}
+                            {{ form.email.errors }}
+                            <label for="{{ form.email.id_for_label }}">&nbspE-mail：</label>
+                            {{ form.email }}
+                            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                            </div>
+                        {% endif %}
+                        <div class="form-group">
+                            {{ form.content.errors }}
+                            <label for="{{ form.comment.id_for_label }}">内容：</label>
+                            <br>
+                            {{ form.content }}
+                        </div>
+                        <input type="hidden" value="{{ post.slug }}" name="post_slug"/>
+                        <button id='comment_submit_key' type='submit' class="btn btn-primary">Submit</button>
+                        <strong id='input-help'></strong>
+                    </form>
                 </div>
-                <input type="hidden" value="{{ post.slug }}" name="post_slug"/>
-                <button id='comment_submit_key' type='submit' class="btn btn-primary">Submit</button>
-                <strong id='input-help'></strong>
-            </form>
+            </div>
         </div>
-      </div>
     </div>
 
 {% endblock %}
