@@ -18,27 +18,45 @@
                 <span>&nbsp- views:{{ post.views }}</span>
             </div>
         </div>
-
         <hr>
-
         {% endfor %}
-        <div id='page_indicator'>
-            {% if page_previous %}
-                {% if query %}
-                <a id='page-pre' class='btn' href="{% url 'blog:index' %}?query={{ query }}&page={{page_previous_id}}">上一页</a>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% if page_previous %}
+                    {% if query %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'blog:index' %}?query={{ query }}&page={{page_previous_id}}" tabindex="-1">上一页</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'blog:index' %}?page={{page_previous_id}}" tabindex="-1">上一页</a>
+                    </li>
+                    {% endif %}
                 {% else %}
-                <a id='page-pre' class='btn' href="{% url 'blog:index' %}?page={{page_previous_id}}">上一页</a>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="{% url 'blog:index' %}?page={{page_previous_id}}" tabindex="-1">上一页</a>
+                    </li>
                 {% endif %}
-            {% endif %}
-                 <span>第{{ page_current }}页</span>
-            {% if page_next %}
-                {% if query %}
-                <a id='page-next' class='btn' href="{% url 'blog:index' %}?query={{ query }}&page={{page_next_id}}">下一页</a>
+                <li class="page-item"><a class="page-link" href="">{{ page_current }}</a></li>
+                {% if page_next %}
+                    {% if query %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'blog:index' %}?query={{ query }}&page={{page_next_id}}">下一页</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'blog:index' %}?page={{page_next_id}}">下一页</a>
+                    </li>
+                    {% endif %}
                 {% else %}
-                <a id='page-next' class='btn' href="{% url 'blog:index' %}?page={{page_next_id}}">下一页</a>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
                 {% endif %}
-            {% endif %}
-        </div>
+            </ul>
+        </nav>
+
     {% else %}
         <strong>都好懒, 还木有发表文章</strong>
     {% endif %}

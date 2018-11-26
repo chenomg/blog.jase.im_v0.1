@@ -31,9 +31,6 @@ nav[data-toggle='toc'] {
 #footer {
   text-align: center;
 }
-#page_indicator {
-  text-align: center;
-}
 #categories {
   margin-left: -20px;
 }
@@ -50,9 +47,6 @@ ul {
 }
 #search-form {
   width: 100%;
-}
-#page_indicator {
-  color: #0D123F;
 }
 #id_slogan {
   text-align: center;
