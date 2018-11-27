@@ -41,7 +41,7 @@ def show_current_tags(is_detail=False, post=None):
 
 @register.inclusion_tag('blog/most_viewed_posts.html')
 def most_viewed_posts():
-    posts = Post.objects.order_by('-views')[:5]
+    posts = Post.objects.filter(is_publish=True).order_by('-views')[:5]
     for p in posts:
         if len(p.title) > NAME_LEN_SIDEBAR:
             p.sidebar_name = p.title[:NAME_LEN_SIDEBAR] + '...'
@@ -52,7 +52,7 @@ def most_viewed_posts():
 
 @register.inclusion_tag('blog/recent_posts.html')
 def recent_posts():
-    posts = Post.objects.order_by('-modified_time')[:5]
+    posts = Post.objects.filter(is_publish=True).order_by('-created_time')[:5]
     for p in posts:
         if len(p.title) > NAME_LEN_SIDEBAR:
             p.sidebar_name = p.title[:NAME_LEN_SIDEBAR] + '...'

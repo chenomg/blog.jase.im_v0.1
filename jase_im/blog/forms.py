@@ -59,6 +59,7 @@ class MDEditorModelForm(forms.ModelForm, forms.Form):
                 'placeholder': '多个标签以","分开',
                 'class': 'form-control col-sm-12 col-md-6',
             }))
+    is_publish = forms.BooleanField(required=False, label='发布')
 
     class Meta:
         model = Post

@@ -53,6 +53,8 @@ class Post(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     # content = models.TextField()
+    publish_content = MDTextField()
+    publish_excerpt = MDTextField(blank=True)
     content = MDTextField()
     excerpt = MDTextField(blank=True)
     # excerpt = models.CharField(max_length=300, blank=True)
@@ -60,6 +62,7 @@ class Post(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
     slug = models.SlugField()
     views = models.PositiveIntegerField(default=0)
+    is_publish = models.BooleanField(default=False)
 
     # likes = models.PositiveIntegerField(default=0)
 

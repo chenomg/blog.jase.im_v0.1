@@ -13,7 +13,6 @@ from registration.backends.simple.views import RegistrationView
 from .forms import CommentForm, UserProfileForm, UserUpdateForm, MDEditorModelForm
 from markdown import markdown, Markdown
 from markdown.extensions.toc import TocExtension
-# from uuslug import slugify
 import datetime
 import json
 
@@ -29,11 +28,11 @@ def index(request):
     if query:
         posts = Post.objects.filter(
             Q(title__icontains=query)
-            | Q(content__icontains=query)).order_by('-created_time')
+            | Q(publish_content__icontains=query)).order_by('-created_time')
     else:
-        posts = Post.objects.all().order_by('-created_time')
+        posts = Post.objects.filter(is_publish=True).order_by('-created_time')
     for post in posts:
-        post.excerpt = md.convert(post.excerpt)
+        post.publish_excerpt = md.convert(post.publish_excerpt)
     posts_per_page = 4
     paginator = Paginator(posts, posts_per_page)
     pages_count = paginator.num_pages
@@ -80,8 +79,8 @@ def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     post.views = post.views + 1
     post.save()
-    post.content = md.convert(post.content)
-    # post.content = markdown(post.content, extensions=exts)
+    post.publish_content = md.convert(post.publish_content)
+    # post.content = md.convert(post.content)
     post.toc = md.toc
     comments = post.comment_set.all()
     tags = post.tags.all().order_by('slug')
@@ -90,18 +89,7 @@ def post_detail(request, slug):
         'comments': comments,
         'tags': tags,
     }
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            email = form.cleaned_data['email']
-            content = form.cleaned_data['content']
-            comment = Comment.objects.create(
-                name=name, content=content, email=email, post=post)
-            context['form'] = form
-            return render(request, 'blog/post_detail.html', context=context)
-    else:
-        form = CommentForm()
+    form = CommentForm()
     context['form'] = form
     return render(request, 'blog/post_detail.html', context=context)
 
@@ -211,11 +199,50 @@ def myposts(request):
     return render(request, 'blog/my_posts.html', context=context)
 
 
-class Update_Post(LoginRequiredMixin, UpdateView):
-    model = Post
-    form_class = MDEditorModelForm
-    success_url = '/'
-    template_name_suffix = '_update_form'
+@login_required
+def update_post(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    user = User.objects.get(username=request.user.username)
+    post_form = MDEditorModelForm(instance=post)
+    context = {'post_form': post_form, 'post': post}
+    if request.method == 'POST':
+        form = MDEditorModelForm(request.POST)
+        context['post_form'] = form
+        if form.is_valid():
+            update_is_publish = request.POST.getlist('is_publish')
+            if post.title != form.cleaned_data['title']:
+                post.slug = ''
+                post.title = form.cleaned_data['title']
+            post.content = form.cleaned_data['content']
+            post.excerpt = form.cleaned_data['excerpt']
+            if update_is_publish:
+                print('选择发布更新')
+                post.is_publish = True
+                post.publish_content = post.content
+                post.publish_excerpt = post.excerpt
+            post.category = Category.objects.get(
+                name=form.cleaned_data['category'])
+            post.save()
+            post.tags = form.cleaned_data['tags']
+            add_tags = form.cleaned_data['add_tags']
+            if add_tags:
+                tgs = [i.strip() for i in add_tags.split(',')]
+                for t in tgs:
+                    try:
+                        tag = Tag(name=t)
+                        tag.save()
+                    except exception as e:
+                        print('tag{}已存在,不需要新建'.format(t))
+                    tag = Tag.objects.get(name=t)
+                    post.tags.add(tag)
+            post.save()
+            if update_is_publish:
+                return HttpResponseRedirect(reverse('blog:index'))
+            else:
+                # 后续使用ajax实现
+                return HttpResponseRedirect(
+                    reverse('blog:update_post', args=[post.slug]))
+    return render(request, 'blog/post_update_form.html', context=context)
 
 
 @login_required
@@ -227,11 +254,17 @@ def add_post(request):
         form = MDEditorModelForm(request.POST)
         context['post_form'] = form
         if form.is_valid():
+            is_publish = request.POST.getlist('is_publish')
             post = Post()
             post.title = form.cleaned_data['title']
-            post.author = User.objects.get(username=request.user.username)
+            post.author = user
             post.content = form.cleaned_data['content']
             post.excerpt = form.cleaned_data['excerpt']
+            if is_publish:
+                print('选择发布')
+                post.is_publish = True
+                post.publish_content = post.content
+                post.publish_excerpt = post.excerpt
             post.category = Category.objects.get(
                 name=form.cleaned_data['category'])
             post.save()
@@ -243,12 +276,17 @@ def add_post(request):
                     try:
                         tag = Tag(name=t)
                         tag.save()
-                    except Exception as e:
+                    except exception as e:
                         print('tag{}已存在,不需要新建'.format(t))
                     tag = Tag.objects.get(name=t)
                     post.tags.add(tag)
             post.save()
-            return HttpResponseRedirect(reverse('blog:index'))
+            if is_publish:
+                return HttpResponseRedirect(reverse('blog:index'))
+            else:
+                # 后续使用ajax实现
+                return HttpResponseRedirect(
+                    reverse('blog:update_post', args=[post.slug]))
     return render(request, 'blog/add_post.html', context=context)
 
 

@@ -10,7 +10,7 @@
                 <h2 class="card-title">
                     <a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a>
                 </h2>
-                <p class="card-text">{{ post.excerpt|safe }}</p>
+                <p class="card-text">{{ post.publish_excerpt|safe }}</p>
                 <a href="{% url 'blog:post_detail' post.slug  %}" class="btn btn-info">Read More &rarr;</a>
             </div>
             <div class="card-footer text-muted">

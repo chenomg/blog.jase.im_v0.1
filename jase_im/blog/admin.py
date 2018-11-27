@@ -20,10 +20,17 @@ class TagAdmin(admin.ModelAdmin):
 
 class PostAdmin(admin.ModelAdmin):
     fields = [
-        'title', 'content', 'excerpt', 'category', 'views', 'author', 'tags'
+        'title',
+        'content',
+        'excerpt',
+        'category',
+        'views',
+        'author',
+        'tags',
+        'is_publish',
     ]
     list_display = ('title', 'created_time', 'category', 'views', 'author',
-                    'slug')
+                    'slug', 'is_publish')
 
 
 class PageAdmin(admin.ModelAdmin):

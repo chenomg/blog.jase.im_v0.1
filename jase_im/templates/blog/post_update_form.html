@@ -7,9 +7,9 @@
         <div class="col-sm-offset-3 col-md-offset-2 main">
             <form action="{% url 'blog:update_post' post.slug %}" method="post" accept-charset="utf-8">
                 {% csrf_token %}
-                {{ form.media }}
-                {{ form.as_p }}
-                <p><input type="submit" name="submit_post" value="发布" id="submit_post" class='btn btn-primary'></p>
+                {{ post_form.media }}
+                {{ post_form.as_p }}
+                <p><input type="submit" name="submit_post" value="保存" id="submit_post" class='btn btn-primary'></p>
             </form>
         </div>
     </div>
