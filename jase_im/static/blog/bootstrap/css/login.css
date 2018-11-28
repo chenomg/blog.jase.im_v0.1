@@ -15,8 +15,7 @@ body#LoginForm{ background-image:url("https://hdwallsource.com/img/2014/9/blur-2
   background: #ffffff none repeat scroll 0 0;
   border-radius: 2px;
   margin: 10px auto 30px;
-  max-width: 68%;
-  padding: 50px 70px 70px 71px;
+  padding: 40px;
 }
 
 .login-form .form-group {
