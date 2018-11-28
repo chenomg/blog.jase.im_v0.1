@@ -30,7 +30,7 @@ DJANGO_STATIC = os.path.join(
 SECRET_KEY = 'y+o(b=flohs@l67vmw06om4xxka2p6!ee8be*pz$%+y#2x16b4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '.jase.im',
