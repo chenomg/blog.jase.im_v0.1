@@ -6,3 +6,4 @@ django-mdeditor
 pygments
 django-registration-redux
 django-google-analytics-app
+django-debug-toolbar
