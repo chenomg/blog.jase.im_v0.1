@@ -2,17 +2,32 @@
 {% load blog_template_tags %}
 {% load staticfiles %}
 {% block body_block %}
-    <h1>Login</h1>
-    <form action="." method="post" accept-charset="utf-8">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Login"/>
-        <input type="hidden" value="{{ next }}" name='next'/>
-    </form>
-    <p>
-        Not a member?
-        <a href="{% url 'registration_register' %}">Sign Up</a>
-    </p>
+<body id="LoginForm">
+<div class="container">
+    <div class='login-form'>
+    <div class='main-div'>
+        <div class='panel'>
+            <h2>User Login</h2>
+            <p>Please enter your username and password</p>
+            <div>
+                <form id='Login' action="." method="post" accept-charset="utf-8">
+                    {% csrf_token %}
+                    <div class='form-group'>
+                    {{ form.as_p }}
+                    </div>
+                    <input type="submit" value="Login"/>
+                    <input type="hidden" value="{{ next }}" name='next'/>
+                </form>
+                <p>
+                    Not a member?
+                    <a href="{% url 'registration_register' %}">Sign Up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+</body>
 {% endblock %}
 {% block tag %}
     {% show_current_tags %}
