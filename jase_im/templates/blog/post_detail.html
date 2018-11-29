@@ -6,7 +6,7 @@
 {% endblock %}
 {% block toc %}
     <!-- sidebar, which will move to the top on a small screen -->
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <nav id="toc" data-toggle="toc" class="sticky-top">
         {{ post.toc|safe }}
         </nav>
@@ -58,7 +58,6 @@
                         <div class="media mb-4">
                             <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
                             <div class="media-body">
-                                <!--<h5 class="mt-0">{{ comment.name }}</h5>-->
                                 <strong>{{ comment.name }}</strong> 发表于:&nbsp{{ comment.created_time|date:'M d, Y' }}
                                 <p>{{ comment.content }}</p>
                             </div>
