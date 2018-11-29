@@ -1,6 +1,9 @@
 {% extends 'blog/base_clean.html' %}
 {% load staticfiles %}
 {% load blog_template_tags %}
+{% block title_block %}
+    编辑 - {{ post.title }}
+{% endblock %}
 {% block body_block %}
     <!-- main content area -->
     <div class="col-sm-12">
