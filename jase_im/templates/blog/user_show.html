@@ -1,6 +1,9 @@
 {% extends 'blog/base.html' %}
 {% load staticfiles %}
 {% load blog_template_tags %}
+{% block title_block %}
+    用户信息 - {{ user.username }}
+{% endblock %}
 {% block body_block %}
     <div>
         <h2>User Profile:</h2>

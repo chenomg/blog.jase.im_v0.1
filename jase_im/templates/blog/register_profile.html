@@ -1,8 +1,9 @@
 {% extends 'blog/base.html' %}
 {% load staticfiles %}
 {% load blog_template_tags %}
-
-
+{% block title_block %}
+    用户信息更新 - {{ user.username }}
+{% endblock %}
 {% block body_block %}
 <form id='register_profile_form' action="{% url 'blog:register_profile'  %}" method="post" enctype='multipart/form-data'>
         {% csrf_token %}

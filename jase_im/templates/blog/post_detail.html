@@ -1,6 +1,9 @@
 {% extends 'blog/base_clean.html' %}
 {% load staticfiles %}
 {% load blog_template_tags %}
+{% block title_block %}
+    {{ post.title }}
+{% endblock %}
 {% block toc %}
     <!-- sidebar, which will move to the top on a small screen -->
     <div class="col-sm-3">
