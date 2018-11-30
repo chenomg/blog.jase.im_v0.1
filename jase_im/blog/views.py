@@ -290,6 +290,7 @@ def add_post(request):
     return render(request, 'blog/add_post.html', context=context)
 
 
+@login_required
 def user_show(request, username):
     user = get_object_or_404(User, username=username)
     userprofile = get_object_or_404(UserProfile, user=user)
