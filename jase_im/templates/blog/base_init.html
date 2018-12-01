@@ -44,16 +44,16 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
-            {% if user.is_authenticated %}
+            {% if login_user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-item nav-link" href="{% url 'blog:addpost' %}">
                     <img id='add_post_button' src="{% static 'blog/images/add.png' %}" alt=""/>
                 </a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'blog:register_profile' %}" id='navbarDropdown' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>{{ user.username }}</a>
+                <a class="nav-link dropdown-toggle" href="{% url 'blog:register_profile' %}" id='navbarDropdown' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>{{ login_user.username }}</a>
                 <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
-                    <a href="{% url 'blog:user_show' user.username %}" class='dropdown-item' target="_self">Profile</a>
+                    <a href="{% url 'blog:user_show' login_user.username %}" class='dropdown-item' target="_self">Profile</a>
                     <div class='dropdown-divider'></div>
                     <a href="{% url 'blog:addpost' %}" class='dropdown-item' target="_self">Compose</a>
                 </div>

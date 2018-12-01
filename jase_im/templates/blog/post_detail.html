@@ -6,7 +6,7 @@
 {% endblock %}
 {% block toc %}
     <!-- sidebar, which will move to the top on a small screen -->
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <nav id="toc" data-toggle="toc" class="sticky-top">
         {{ post.toc|safe }}
         </nav>
@@ -14,7 +14,7 @@
 {% endblock %}
 {% block body_block %}
     <!-- main content area -->
-    <div class="col-sm-8">
+    <div class="col-sm-9">
         <div class="col-sm-offset-3 col-md-offset-2 main">
             {% if post %}
             <h1 class='mt-4'>{{ post.title }}</h1>
@@ -25,7 +25,7 @@
 
             <!-- Date/Time -->
             <p>发表于: {{ post.created_time|date:' m月 d日, Y年' }}
-            <span>|&nbsp分类:<a href="{% url 'blog:category' %}" >{{ post.category }}</a>&nbsp|&nbsp标签:
+            <span>|&nbsp分类:<a href="{% url 'blog:category' %}#{{ post.category }}" >{{ post.category }}</a>&nbsp|&nbsp标签:
             {% if tags %}
                 {% for t in tags %}
                 <span><a href="{% url 'blog:tag_show' t.slug %}" >{{ t }}</a></span>
