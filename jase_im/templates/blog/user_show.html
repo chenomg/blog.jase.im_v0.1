@@ -9,18 +9,16 @@
         <h2>User Profile:</h2>
         <div class='row'>
             <div class='col-lg-4 portfolio-item'>
-            {% if userprofile %}
                 {% if userprofile.picture %}
                 <img id='avator_show' src="/media/{{ userprofile.picture }}" alt="avator"/>
                 {% endif %}
-            {% endif %}
             </div>
             <div class='col-lg-8 portfolio-item'>
                 <div>
-                    <span>Username: {{ user.username }}</span>
+                    <span>Username: {{ show_user.username }}</span>
                 </div>
                 <div>
-                    <span>Date-joined: {{ user.date_joined|date:'Y-m-d' }}</span>
+                    <span>Date-joined: {{ show_user.date_joined|date:'Y-m-d' }}</span>
                 </div>
                 {% if userprofile %}
                 <div>
@@ -32,7 +30,7 @@
                 </div>
                 {% endif %}
                 <br>
-                {% if user.is_authenticated %}
+                {% if is_current_user %}
                 <a class='btn btn-primary' href="{% url 'blog:register_profile' %}" target="_self">变更</a>
                 {% endif %}
             </div>
@@ -43,20 +41,20 @@
     <br>
 
     <div>
-        {% if user %}
-        <h2>Posts posted by <strong>{{ user.username }}</strong> :</h2>
+        {% if posts %}
+        <h2>Posts posted by <strong>{{ show_user.username }}</strong> :</h2>
             <ul>
                 {% for post in posts %}
                     <h4><a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a>
 
-                    {% if user.is_authenticated %}
+                    {% if is_current_user %}
                     <a id='post_update' href="{% url 'blog:update_post' post.slug %}" target="_self">编辑</a>
                     {% endif %}
                     </h4>
                 {% endfor %}
             </ul>
         {% else %}
-            There are no posts posted by: <strong>{{ user.username }}</strong>.
+            <strong>{{ show_user.username }}</strong>  还没有发布文章.
         {% endif %}
     </div>
 {% endblock %}

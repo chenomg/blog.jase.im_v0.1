@@ -11,7 +11,7 @@
             <ul>
                 {% for post in posts %}
                     <h4><a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a></h4>
-                    <p>{{ post.content|safe }}</p>
+                    <p>{{ post.publish_excerpt|safe }}</p>
                 {% endfor %}
             </ul>
         {% else %}

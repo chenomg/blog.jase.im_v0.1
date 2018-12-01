@@ -24,6 +24,7 @@ md = Markdown(extensions=[
 
 
 def index(request):
+    login_user = get_login_user(request)
     query = request.GET.get('query')
     if query:
         posts = Post.objects.filter(
@@ -53,6 +54,7 @@ def index(request):
         page_id = pages_count
     selected_page = paginator.page(page_id)
     context_dic = {
+        'login_user': login_user,
         'posts': selected_page,
         'pages_total': pages_count,
         'page_current': page_id,
@@ -66,16 +68,18 @@ def index(request):
 
 
 def about(request):
+    login_user = get_login_user(request)
     page = get_object_or_404(Page, slug='about')
     page.views += 1
     page.save()
     page.content = md.convert(page.content)
     page.toc = md.toc
-    context_dic = {'page': page}
+    context_dic = {'page': page, 'login_user': login_user}
     return render(request, 'blog/about.html', context=context_dic)
 
 
 def post_detail(request, slug):
+    login_user = get_login_user(request)
     post = get_object_or_404(Post, slug=slug)
     post.views = post.views + 1
     post.save()
@@ -88,6 +92,7 @@ def post_detail(request, slug):
         'post': post,
         'comments': comments,
         'tags': tags,
+        'login_user': login_user,
     }
     form = CommentForm()
     context['form'] = form
@@ -119,36 +124,49 @@ def comment_submit(request):
 
 
 def category(request):
+    login_user = get_login_user(request)
     categories = Category.objects.all().order_by('-name')
     posts = Post.objects.all()
-    context = {'categories': categories, 'posts': posts}
+    context = {
+        'categories': categories,
+        'posts': posts,
+        'login_user': login_user
+    }
     return render(request, 'blog/category.html', context=context)
 
 
 def archive(request):
+    login_user = get_login_user(request)
     posts = Post.objects.all().order_by('created_time')
     dates = set([(p.created_time.year, p.created_time.month) for p in posts])
     dates = sorted([datetime.date(dt[0], dt[1], 1) for dt in dates])
-    context = {'posts': posts, 'dates': dates}
+    context = {'posts': posts, 'dates': dates, 'login_user': login_user}
     return render(request, 'blog/archive.html', context=context)
 
 
 def tag_list_show(request):
+    login_user = get_login_user(request)
     tags = Tag.objects.all().order_by('slug')
-    context = {'tags': tags}
+    context = {'tags': tags, 'login_user': login_user}
     return render(request, 'blog/tags_list_show.html', context=context)
 
 
 def tag_show(request, tag_slug):
+    login_user = get_login_user(request)
     try:
         tag = Tag.objects.get(slug=tag_slug)
         posts = Tag.objects.get(slug=tag_slug).post_set.all()
         for p in posts:
-            p.content = md.convert(p.content)
+            p.publish_excerpt = md.convert(p.publish_excerpt)
     except Exception as e:
         tag = False
         posts = None
-    context = {'tag': tag, 'tag_slug': tag_slug, 'posts': posts}
+    context = {
+        'tag': tag,
+        'tag_slug': tag_slug,
+        'posts': posts,
+        'login_user': login_user
+    }
     return render(request, 'blog/tag_show.html', context=context)
 
 
@@ -167,42 +185,38 @@ def register_profile(request):
     """
     用于展示目前登陆用户的信息,并且可以更新部分信息, 未完成
     """
-    user = User.objects.get(username=request.user.username)
-    if UserProfile.objects.filter(user=user):
-        userprofile = UserProfile.objects.get(user=user)
+    login_user = get_login_user(request)
+    if UserProfile.objects.filter(user=login_user):
+        userprofile = UserProfile.objects.get(user=login_user)
     else:
-        userprofile = UserProfile(user=user)
+        userprofile = UserProfile(user=login_user)
         userprofile.save()
     userform = UserUpdateForm({
-        'email': user.email,
+        'email': login_user.email,
         'website': userprofile.website
     })
     if request.method == 'POST':
         userform = UserUpdateForm(request.POST)
         if userform.is_valid():
-            user.email = userform.cleaned_data['email']
-            user.save()
+            login_user.email = userform.cleaned_data['email']
+            login_user.save()
             userprofile.website = userform.cleaned_data['website']
         picture = request.FILES.get('avator')
         if picture:
             userprofile.picture = picture
         userprofile.save()
-    context = {'user': user, 'userprofile': userprofile, 'userform': userform}
+    context = {
+        'login_user': login_user,
+        'userprofile': userprofile,
+        'userform': userform
+    }
     return render(request, 'blog/register_profile.html', context=context)
 
 
 @login_required
-def myposts(request):
-    user = User.objects.get(username=request.user.username)
-    myposts = Post.objects.filter(author=user).order_by('-created_time')
-    context = {'posts': myposts}
-    return render(request, 'blog/my_posts.html', context=context)
-
-
-@login_required
 def update_post(request, slug):
-    post = get_object_or_404(Post, slug=slug)
-    user = User.objects.get(username=request.user.username)
+    login_user = get_login_user(request)
+    post = get_object_or_404(Post, slug=slug, author=login_user)
     post_form = MDEditorModelForm(instance=post)
     context = {'post_form': post_form, 'post': post}
     if request.method == 'POST':
@@ -247,9 +261,9 @@ def update_post(request, slug):
 
 @login_required
 def add_post(request):
-    user = User.objects.get(username=request.user.username)
+    login_user = get_login_user(request)
     post_form = MDEditorModelForm()
-    context = {'post_form': post_form, 'user': user}
+    context = {'post_form': post_form, 'login_user': login_user}
     if request.method == 'POST':
         form = MDEditorModelForm(request.POST)
         context['post_form'] = form
@@ -257,7 +271,7 @@ def add_post(request):
             is_publish = request.POST.getlist('is_publish')
             post = Post()
             post.title = form.cleaned_data['title']
-            post.author = user
+            post.author = login_user
             post.content = form.cleaned_data['content']
             post.excerpt = form.cleaned_data['excerpt']
             if is_publish:
@@ -292,18 +306,38 @@ def add_post(request):
 
 @login_required
 def user_show(request, username):
-    user = get_object_or_404(User, username=username)
-    userprofile = get_object_or_404(UserProfile, user=user)
-    posts = Post.objects.filter(author=user).order_by('-created_time')
-    context = {'user': user, 'posts': posts, 'userprofile': userprofile}
+    login_user = get_login_user(request)
+    show_user = get_object_or_404(User, username=username)
+    if UserProfile.objects.filter(user=show_user):
+        userprofile = UserProfile.objects.get(user=show_user)
+    else:
+        userprofile = UserProfile(user=show_user)
+        userprofile.save()
+    posts = Post.objects.filter(author=show_user).order_by('-created_time')
+    context = {
+        'show_user': show_user,
+        'login_user': login_user,
+        'posts': posts,
+        'userprofile': userprofile,
+        'is_current_user': False
+    }
+    if login_user == show_user:
+        context['is_current_user'] = True
     return render(request, 'blog/user_show.html', context=context)
 
 
 def page_not_found(request):
+    login_user = get_login_user(request)
     page = Page.objects.get(slug='404')
     page.views += 1
     page.save()
     page.content = md.convert(page.content)
     page.toc = md.toc
-    context_dic = {'page': page}
+    context_dic = {'page': page, 'login_user': login_user}
     return render(request, 'blog/404.html', {'page': page})
+
+def get_login_user(request):
+    if request.user.is_authenticated:
+        return User.objects.get(username=request.user.username)
+    else:
+        return None

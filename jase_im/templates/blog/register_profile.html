@@ -10,11 +10,11 @@
         <h2>Profile Regsitration</h2>
         <div >
             <span>Username:</span>
-            <input type="text" value="{{ user.username }}" name="username" id='username' readonly='value'/>
+            <input type="text" value="{{ login_user.username }}" name="username" id='username' readonly='value'/>
         </div>
         <div>
             <span>Date-joined:</span>
-            <input type="text" value="{{ user.date_joined|date:'Y-m-d'}}" readonly='value'/>
+            <input type="text" value="{{ login_user.date_joined|date:'Y-m-d'}}" readonly='value'/>
         </div>
         {{ userform.as_p }}
         {% if userprofile %}

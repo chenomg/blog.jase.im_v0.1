@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^tag/(?P<tag_slug>.+)/', views.tag_show, name='tag_show'),
     url(r'^post/add/$', views.add_post, name='addpost'),
     url(r'^post/update/(?P<slug>.+)/$', views.update_post, name='update_post'),
-    url(r'^posts/my/', views.myposts, name='myposts'),
     url(r'^post/(?P<slug>.+)/$', views.post_detail, name='post_detail'),
     url(r'^category/', views.category, name='category'),
     url(r'^register_profile/', views.register_profile,
