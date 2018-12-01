@@ -218,7 +218,7 @@ def update_post(request, slug):
     login_user = get_login_user(request)
     post = get_object_or_404(Post, slug=slug, author=login_user)
     post_form = MDEditorModelForm(instance=post)
-    context = {'post_form': post_form, 'post': post}
+    context = {'post_form': post_form, 'post': post, 'login_user': login_user}
     if request.method == 'POST':
         form = MDEditorModelForm(request.POST)
         context['post_form'] = form
