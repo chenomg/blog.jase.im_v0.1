@@ -72,23 +72,40 @@ h2 > hr {
 
 h1 {
     /*border-bottom: 8px solid #71BA51 !important;*/
-    font-size: 30px !important;
+    font-size: 26px !important;
 }
 
 h2 {
     /*border-bottom: 5px solid #71BA51 !important;*/
-    font-size: 26px !important;
+    font-size: 24px !important;
 }
 
 h3 {
     /*border-bottom: 5px solid #71BA51 !important;*/
-    font-size: 23px !important;
+    font-size: 22px !important;
 }
 
 h4 {
     /*border-bottom: 5px solid #71BA51 !important;*/
     font-size: 20px !important;
 }
+
+h5 {
+    /*border-bottom: 5px solid #71BA51 !important;*/
+    font-size: 18px !important;
+}
+
+h6 {
+    /*border-bottom: 5px solid #71BA51 !important;*/
+    font-size: 16px !important;
+}
+
+h7 {
+    /*border-bottom: 5px solid #71BA51 !important;*/
+    font-size: 14px !important;
+}
+
+
 
 
 /*a {*/

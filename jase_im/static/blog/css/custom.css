@@ -58,6 +58,11 @@ ul {
   list-style-type: square;
   margin-left: -16px;
 }
+
+#comments-show {
+  list-style-type: none;
+}
+
 .archive-posts {
   margin-left: 30px;
 }
