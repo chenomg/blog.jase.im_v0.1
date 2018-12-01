@@ -29,7 +29,7 @@ pre {
   border: 1px solid #cccccc;
   font-size: 13px;
   line-height: 19px;
-  /*word-wrap: break-word;*/
+  word-wrap: break-word;
   overflow: scroll;
   padding: 6px 10px;
   border-radius: 3px; }
@@ -144,4 +144,7 @@ code {
     border-radius: 2px;
     white-space: inherit;
     background-color: #f8f8f8;
+}
+pre, code, tt {
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
 }
