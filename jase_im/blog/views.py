@@ -274,13 +274,9 @@ def add_post(request):
             post.author = login_user
             post.content = form.cleaned_data['content']
             post.excerpt = form.cleaned_data['excerpt']
-            if is_publish:
-                print('选择发布')
-                post.is_publish = True
-                post.publish_content = post.content
-                post.publish_excerpt = post.excerpt
             post.category = Category.objects.get(
                 name=form.cleaned_data['category'])
+            # 保存后excerpt若为空值则自动生成
             post.save()
             post.tags = form.cleaned_data['tags']
             add_tags = form.cleaned_data['add_tags']
@@ -296,6 +292,11 @@ def add_post(request):
                     post.tags.add(tag)
             post.save()
             if is_publish:
+                print('选择发布')
+                post.is_publish = True
+                post.publish_content = post.content
+                post.publish_excerpt = post.excerpt
+                post.save()
                 return HttpResponseRedirect(reverse('blog:index'))
             else:
                 # 后续使用ajax实现
@@ -335,6 +336,7 @@ def page_not_found(request):
     page.toc = md.toc
     context_dic = {'page': page, 'login_user': login_user}
     return render(request, 'blog/404.html', {'page': page})
+
 
 def get_login_user(request):
     if request.user.is_authenticated:
