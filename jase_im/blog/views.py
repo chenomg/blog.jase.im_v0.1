@@ -268,7 +268,7 @@ def update_post(request, slug):
             post.content = form.cleaned_data['content']
             post.excerpt = form.cleaned_data['excerpt']
             if update_is_publish:
-                logging.info('用户: {}, IP: {}, 更新并发布: 文章: {} - {}'.format(
+                logging.info('用户: {}, IP: {}, 更新完成时将同时发布: 文章: {} - {}'.format(
                     login_user, request.META['REMOTE_ADDR'], post.id,
                     post.slug))
                 post.is_publish = True
