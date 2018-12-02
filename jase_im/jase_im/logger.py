@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import re
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_LOG_DIR = os.path.join(BASE_DIR, "logs")
+
+find_connectionpool = re.compile(r'connectionpool')
 
 
 def set_connectionpool_debug(record):
     # 设置日志过滤器
     if record.exc_info:
         exc_type, exc_value = record.exc_info[:2]
-        print(exc_type, exc_value)
+        record.exc_info[0] = 'WARN'
+        # print(record.exc_info)
+        # if find_connectionpool.findall(exc_value):
+            # record.exc_info[0] = ''
+            # record.exc_info[1] = ''
     return True
 
 
@@ -41,8 +48,8 @@ LOGGING = {
             'callback': set_connectionpool_debug,
         },
         # 是否支持DEBUG级别日志过滤
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
         },
     },
     # 处理器：需要处理什么级别的日志及如何处理
@@ -62,6 +69,7 @@ LOGGING = {
             'backupCount': 5,  # 日志文件备份的数量
             'formatter': 'standard',  # 日志输出格式
             'encoding': 'utf-8',
+            'filters': ['set_connectionpool_debug'],
         },
         # 默认日志处理器
         'default': {
@@ -72,6 +80,7 @@ LOGGING = {
             'backupCount': 5,  # 日志文件备份的数量
             'formatter': 'standard',  # 日志输出格式
             'encoding': 'utf-8',
+            'filters': ['set_connectionpool_debug'],
         },
         # 日志处理级别warn
         'warn': {

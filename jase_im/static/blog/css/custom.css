@@ -107,5 +107,6 @@ img {
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
   padding-left: 2.25rem;
+  padding-right: 2.25rem;
 }
 
