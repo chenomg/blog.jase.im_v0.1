@@ -24,19 +24,6 @@ strong {
     /*color: #898989;*/
 }
 
-pre {
-  background-color: #f8f8f8;
-  border: 1px solid #cccccc;
-  font-size: 13px;
-  line-height: 19px;
-  word-wrap: break-word;
-  overflow: scroll;
-  padding: 6px 10px;
-  border-radius: 3px; }
-  pre code, pre tt {
-    background-color: transparent;
-    border: none; }
-
 h1,h2,h3,h4,h5,h6 {
     word-break: break-all !important;
     /*margin: 20px 0;*/
@@ -132,17 +119,31 @@ hr {
     border-bottom: 1px solid #ddd;
 }
 
+/*pre {*/
+ /*background: #f2f2f2 !important;*/
+ /*padding: 12px 13px;*/
+/*}*/
+
 pre {
- background: #f2f2f2 !important;
- padding: 12px 13px;
-}
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  /*word-wrap: break-word;*/
+  overflow: scroll;
+  padding: 6px 10px;
+  border-radius: 3px; }
+  pre code, pre tt {
+    background-color: transparent;
+    border: none; }
+
 
 code {
     margin: 0 2px;
     padding: 3px 5px;
     color: #e96900;
     border-radius: 2px;
-    white-space: inherit;
+    /*white-space: inherit;*/
     background-color: #f8f8f8;
 }
 pre, code, tt {

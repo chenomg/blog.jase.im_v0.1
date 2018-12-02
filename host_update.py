@@ -3,6 +3,8 @@
 import os
 import paramiko
 import json
+
+# 用于存放服务器登陆信息的文件, 格式如下
 """
 (KEY_FILE: host.key) config sample
 {
@@ -16,6 +18,7 @@ import json
 KEY_FILE = 'host.key'
 
 
+# 获取服务器数据
 def get_config(key_file=KEY_FILE):
     with open(key_file, 'r') as k:
         _key = json.load(fp=k)
@@ -23,6 +26,7 @@ def get_config(key_file=KEY_FILE):
 
 
 config = get_config()
+# 远程执行自动部署代码
 cmd = 'cd ' + config['dir'] + ';\
     rm -r collected_static;\
     git fetch;\
