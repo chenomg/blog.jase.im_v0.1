@@ -5,6 +5,15 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_LOG_DIR = os.path.join(BASE_DIR, "logs")
 
+
+def set_connectionpool_debug(record):
+    # 设置日志过滤器
+    if record.exc_info:
+        exc_type, exc_value = record.exc_info[:2]
+        print(exc_type, exc_value)
+    return True
+
+
 LOGGING = {
     'version': 1,  # 保留的参数，默认是1
     'disable_existing_loggers': False,  # 是否禁用已经存在的logger实例
@@ -23,6 +32,18 @@ LOGGING = {
         'collect': {
             'format': '%(message)s'
         }
+    },
+    # 日志过滤器, 待完成
+    'filters': {
+        # 特殊过滤器，替换foo成bar，可以自己配置
+        'set_connectionpool_debug': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': set_connectionpool_debug,
+        },
+        # 是否支持DEBUG级别日志过滤
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
     },
     # 处理器：需要处理什么级别的日志及如何处理
     'handlers': {
