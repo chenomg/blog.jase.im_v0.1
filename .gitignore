@@ -1,5 +1,7 @@
 # custom
 *.key
+jase_im/media/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
