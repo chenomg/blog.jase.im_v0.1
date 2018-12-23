@@ -147,7 +147,7 @@ def category(request):
     logging.info('用户: {}, IP: {}, 打开Category'.format(
         login_user, request.META['REMOTE_ADDR']))
     categories = Category.objects.all().order_by('-name')
-    posts = Post.objects.all()
+    posts = Post.objects.filter(is_publish=True)
     context = {
         'categories': categories,
         'posts': posts,
@@ -160,9 +160,10 @@ def archive(request):
     login_user = get_login_user(request)
     logging.info('用户: {}, IP: {}, 打开存档'.format(login_user,
                                                request.META['REMOTE_ADDR']))
-    posts = Post.objects.all().order_by('created_time')
+    posts = Post.objects.filter(is_publish=True).order_by('-created_time')
     dates = set([(p.created_time.year, p.created_time.month) for p in posts])
-    dates = sorted([datetime.date(dt[0], dt[1], 1) for dt in dates])
+    # 存档页面月份倒序
+    dates = sorted([datetime.date(dt[0], dt[1], 1) for dt in dates], reverse=True)
     context = {'posts': posts, 'dates': dates, 'login_user': login_user}
     return render(request, 'blog/archive.html', context=context)
 
@@ -182,7 +183,7 @@ def tag_show(request, tag_slug):
         tag = Tag.objects.get(slug=tag_slug)
         logging.info('用户: {}, IP: {}, 打开tag: {}'.format(
             login_user, request.META['REMOTE_ADDR'], tag.slug))
-        posts = Tag.objects.get(slug=tag_slug).post_set.all()
+        posts = Tag.objects.get(slug=tag_slug).post_set.filter(is_publish=True)
         for p in posts:
             p.publish_excerpt = md.convert(p.publish_excerpt)
     except Exception as e:
