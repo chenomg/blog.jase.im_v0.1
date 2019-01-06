@@ -5,7 +5,7 @@ My first personal blog-site using Django framework
 
 Home page:
 
-![屏幕快照 2019-01-06 上午11.16.35](README.assets/屏幕快照 2019-01-06 上午11.16.35.png)
+![屏幕快照 2019-01-06 上午11.16.35](README.assets/home3.png)
 
 博客详情页增加评论功能
 
