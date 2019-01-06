@@ -5,7 +5,7 @@ My first personal blog-site using Django framework
 
 Home page:
 
-![home](README.assets/home2.png)
+![屏幕快照 2019-01-06 上午11.16.35](README.assets/屏幕快照 2019-01-06 上午11.16.35.png)
 
 博客详情页增加评论功能
 
@@ -27,3 +27,4 @@ TODO:
 -   [x] 文章编辑页面新增一个应用按钮(保存后不跳转)
 -   [ ] 文章仅保存(不发布)时,保存按钮动作使用ajax实现
 -   [ ] 文章编辑时每隔一定时间自动保存草稿
+-   [ ] 网站后台监控界面
