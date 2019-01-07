@@ -44,7 +44,7 @@ LOGGING = {
     'filters': {
         # 特殊过滤器，替换foo成bar，可以自己配置
         'set_connectionpool_debug': {
-            '()': 'django.utils.log.CallbackFilter',
+            '[]': 'django.utils.log.CallbackFilter',
             'callback': set_connectionpool_debug,
         },
         # 是否支持DEBUG级别日志过滤

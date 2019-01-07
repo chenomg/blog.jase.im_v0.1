@@ -32,11 +32,11 @@ def index(request):
             login_user, request.META['REMOTE_ADDR'], query))
         posts = Post.objects.filter(
             Q(title__icontains=query)
-            | Q(publish_content__icontains=query)).order_by('-created_time')
+            | Q(publish_content__icontains=query)).order_by('-modified_time')
     else:
         logging.info('用户: {}, IP: {}, 打开主页'.format(
             login_user, request.META['REMOTE_ADDR']))
-        posts = Post.objects.filter(is_publish=True).order_by('-created_time')
+        posts = Post.objects.filter(is_publish=True).order_by('-modified_time')
     for post in posts:
         post.publish_excerpt = md.convert(post.publish_excerpt)
     posts_per_page = 4
@@ -293,6 +293,7 @@ def update_post(request, slug):
                                    post.id, post.slug))
                     tag = Tag.objects.get(name=t)
                     post.tags.add(tag)
+            post.modified_time = datetime.datetime.now()
             post.save()
             if update_is_publish:
                 logging.info('用户: {}, IP: {}, 更新发布: 文章: {} - {}'.format(

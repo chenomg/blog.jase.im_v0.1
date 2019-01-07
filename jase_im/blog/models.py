@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from uuslug import slugify
 from mdeditor.fields import MDTextField
 from random import choice
+from datetime import datetime
 
 
 def gene_rand_code(digital=8):
@@ -51,7 +52,7 @@ class Post(models.Model):
     title = models.CharField(max_length=128)
     author = models.ForeignKey(User)
     created_time = models.DateTimeField(auto_now_add=True)
-    modified_time = models.DateTimeField(auto_now=True)
+    modified_time = models.DateTimeField(default=datetime.now)
     # content = models.TextField()
     publish_content = MDTextField()
     publish_excerpt = MDTextField(blank=True)
