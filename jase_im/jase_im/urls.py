@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^djga/', include('google_analytics.urls')),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^media/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
+    url(r'^api-auth/', include('rest_framework.urls')),
 ]
 if settings.DEBUG:
     import debug_toolbar
