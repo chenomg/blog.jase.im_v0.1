@@ -1,8 +1,6 @@
-import logging
-from markdown import markdown, Markdown
-from markdown.extensions.toc import TocExtension
 import datetime
 import json
+import logging
 
 from markdown import markdown, Markdown
 from markdown.extensions.toc import TocExtension
@@ -16,7 +14,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
-from blog.models import Category, Tag, Post, Comment, Page, UserProfile
 from registration.backends.simple.views import RegistrationView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -24,6 +21,7 @@ from rest_framework import permissions, status
 
 from .forms import CommentForm, UserProfileForm, UserUpdateForm, MDEditorModelForm
 from blog.serializers import PostGetSerializer, PostAddSerializer
+from blog.models import Category, Tag, Post, Comment, Page, UserProfile
 
 md = Markdown(extensions=[
     'markdown.extensions.extra',
