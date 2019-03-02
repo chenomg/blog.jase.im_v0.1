@@ -20,16 +20,19 @@ from django.contrib import admin
 from blog import views
 from django.conf import settings
 from django.views.static import serve
+from jase_im.views import home_view
 
 handler404 = views.page_not_found
 urlpatterns = [
-    url(r'^$', RedirectView.as_view(url='/blog/')),
+    # url(r'^$', RedirectView.as_view(url='/blog/')),
+    url(r'^$', home_view.home, name='home'),
     url(r'^admin/', admin.site.urls),
     url(r'^blog/', include('blog.urls')),
     url(r'^mdeditor/', include('mdeditor.urls')),
     url(r'^djga/', include('google_analytics.urls')),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^media/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
+    url(r'^api-auth/', include('rest_framework.urls')),
 ]
 if settings.DEBUG:
     import debug_toolbar

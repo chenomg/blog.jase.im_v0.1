@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'registration',
     'google_analytics',
     'debug_toolbar',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,14 @@ MIDDLEWARE = [
 
 GOOGLE_ANALYTICS = {
     'google_analytics_id': 'UA-119028437-1',
+}
+
+REST_FRAMEWORK = {
+    # Use Django's standard 'django.contrib.auth' permission,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
 }
 
 ROOT_URLCONF = 'jase_im.urls'

@@ -1,3 +1,9 @@
+import datetime
+import json
+import logging
+
+from markdown import markdown, Markdown
+from markdown.extensions.toc import TocExtension
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -7,15 +13,16 @@ from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib.sessions.models import Session
 from django.views.generic.edit import UpdateView
-from blog.models import Category, Tag, Post, Comment, Page, UserProfile
 from registration.backends.simple.views import RegistrationView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import permissions, status
+
 from .forms import CommentForm, UserProfileForm, UserUpdateForm, MDEditorModelForm
-from markdown import markdown, Markdown
-from markdown.extensions.toc import TocExtension
-import logging
-import datetime
-import json
+from blog.serializers import PostGetSerializer, PostAddSerializer
+from blog.models import Category, Tag, Post, Comment, Page, UserProfile
 
 md = Markdown(extensions=[
     'markdown.extensions.extra',
@@ -163,7 +170,8 @@ def archive(request):
     posts = Post.objects.filter(is_publish=True).order_by('-created_time')
     dates = set([(p.created_time.year, p.created_time.month) for p in posts])
     # 存档页面月份倒序
-    dates = sorted([datetime.date(dt[0], dt[1], 1) for dt in dates], reverse=True)
+    dates = sorted(
+        [datetime.date(dt[0], dt[1], 1) for dt in dates], reverse=True)
     context = {'posts': posts, 'dates': dates, 'login_user': login_user}
     return render(request, 'blog/archive.html', context=context)
 
@@ -349,8 +357,10 @@ def add_post(request):
                         tag = Tag(name=t)
                         tag.save()
                     except exception as e:
-                        logging.warn('用户: {}, IP: {}, Add_Post标签 {} 已存在: 文章: {} - {}'.format(
-                            login_user, request.META['REMOTE_ADDR'], t, post.id, post.slug))
+                        logging.warn(
+                            '用户: {}, IP: {}, Add_Post标签 {} 已存在: 文章: {} - {}'.
+                            format(login_user, request.META['REMOTE_ADDR'], t,
+                                   post.id, post.slug))
                     tag = Tag.objects.get(name=t)
                     post.tags.add(tag)
             post.save()
@@ -361,16 +371,14 @@ def add_post(request):
                 post.publish_content = post.content
                 post.publish_excerpt = post.excerpt
                 post.save()
-                logging.info(
-                    '用户: {}, IP: {}, Add_Post已发布: 文章: {} - {}'.format(
-                        login_user, request.META['REMOTE_ADDR'], post.id,
-                        post.slug))
+                logging.info('用户: {}, IP: {}, Add_Post已发布: 文章: {} - {}'.format(
+                    login_user, request.META['REMOTE_ADDR'], post.id,
+                    post.slug))
                 return HttpResponseRedirect(reverse('blog:index'))
             else:
-                logging.info(
-                    '用户: {}, IP: {}, Add_Post已保存: 文章: {} - {}'.format(
-                        login_user, request.META['REMOTE_ADDR'], post.id,
-                        post.slug))
+                logging.info('用户: {}, IP: {}, Add_Post已保存: 文章: {} - {}'.format(
+                    login_user, request.META['REMOTE_ADDR'], post.id,
+                    post.slug))
                 # 后续使用ajax实现
                 return HttpResponseRedirect(
                     reverse('blog:update_post', args=[post.slug]))
@@ -420,3 +428,41 @@ def get_login_user(request):
         return User.objects.get(username=request.user.username)
     else:
         return None
+
+
+@api_view(['GET', 'POST'])
+@permission_classes((permissions.AllowAny, ))
+def post_collection(request):
+    if request.method == 'GET':
+        # posts = Post.objects.all()
+        posts = Post.objects.filter(is_publish=True).order_by('-modified_time')
+        serializer = PostGetSerializer(posts, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        data = {
+            'title': request.DATA.get('title'),
+            'author': request.user.pk,
+            'content': request.DATA.get('content'),
+            'excerpt': request.DATA.get('excerpt'),
+            'category': request.DATA.get('category'),
+            'tags': request.DATA.get('tags'),
+            'is_publish': request.DATA.get('is_publish')
+        }
+        serializer = PostAddSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny, ))
+def post_element(request, pk):
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = PostGetSerializer(post)
+        return Response(serializer.data)
