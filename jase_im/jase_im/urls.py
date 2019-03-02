@@ -20,7 +20,7 @@ from django.contrib import admin
 from blog import views
 from django.conf import settings
 from django.views.static import serve
-from jase_im.view import home_view
+from jase_im.views import home_view
 
 handler404 = views.page_not_found
 urlpatterns = [
