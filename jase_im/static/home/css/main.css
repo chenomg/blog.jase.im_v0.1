@@ -204,7 +204,7 @@ ul {
 	border: 3px solid #5ba4e5;
 	transition: all .5s;
 	-webkit-transform: rotate(360deg);
- /* Safari 和 Chrome */
+ /* Safari å’Œ Chrome */
 	-moz-transform: rotate(360deg);
  	/* Firefox */
 	-o-transform: rotate(350deg);
@@ -769,5 +769,3 @@ i {
 		margin-bottom: .4em;
 	}
 }
-
-	

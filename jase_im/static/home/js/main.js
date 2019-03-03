@@ -34,6 +34,8 @@ $(document).ready(function() {
         $('.navigation-wrapper').off('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend');
       });
       $('.navigation-wrapper').toggleClass('animated bounceInDown animated bounceOutUp');
+      //添加
+      $('.navigation-wrapper').removeClass('visible animanted bounceInDown');
 
     } else {
       $('.navigation-wrapper').toggleClass('visible animated bounceInDown');
@@ -47,10 +49,9 @@ $(document).ready(function() {
         $('.navigation-wrapper').toggleClass('visible animated bounceOutUp');
         $('.navigation-wrapper').off('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend');
       });
-
       $('.navigation-wrapper').toggleClass('animated bounceInDown animated bounceOutUp');
     }
-    
     $('.btn-mobile-menu__icon').toggleClass('fa fa-list fa fa-angle-up animated fadeIn');
   });
+
 });
