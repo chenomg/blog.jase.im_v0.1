@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'google_analytics',
     'debug_toolbar',
     'rest_framework',
+    'homepage',
 ]
 
 MIDDLEWARE = [
