@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^$', include('homepage.urls'), name='homepage'),
     url(r'^admin/', admin.site.urls),
     url(r'^blog/', include('blog.urls')),
+    url(r'^dashboard/', include('dashboard.urls')),
     url(r'^mdeditor/', include('mdeditor.urls')),
     url(r'^djga/', include('google_analytics.urls')),
     url(r'^accounts/', include('registration.backends.simple.urls')),
