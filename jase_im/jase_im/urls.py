@@ -24,7 +24,7 @@ from django.views.static import serve
 handler404 = views.page_not_found
 urlpatterns = [
     # url(r'^$', RedirectView.as_view(url='/blog/')),
-    url(r'', include('homepage.urls'), name='homepage'),
+    url(r'^$', include('homepage.urls'), name='homepage'),
     url(r'^admin/', admin.site.urls),
     url(r'^blog/', include('blog.urls')),
     url(r'^mdeditor/', include('mdeditor.urls')),
