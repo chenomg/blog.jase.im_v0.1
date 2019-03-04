@@ -20,12 +20,11 @@ from django.contrib import admin
 from blog import views
 from django.conf import settings
 from django.views.static import serve
-from jase_im.views import home_view
 
 handler404 = views.page_not_found
 urlpatterns = [
     # url(r'^$', RedirectView.as_view(url='/blog/')),
-    url(r'^$', home_view.home, name='home'),
+    url(r'^$', include('homepage.urls'), name='homepage'),
     url(r'^admin/', admin.site.urls),
     url(r'^blog/', include('blog.urls')),
     url(r'^mdeditor/', include('mdeditor.urls')),
