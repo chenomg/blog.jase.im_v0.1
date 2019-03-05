@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth.models import User
 # from django.utils.datastructures import SortedDict
 from mdeditor.fields import MDTextFormField
-from .models import Comment, UserProfile, Post
+from blog.models import Comment, UserProfile, Post
 
 
 class CommentForm(forms.ModelForm):

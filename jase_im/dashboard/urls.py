@@ -20,4 +20,5 @@ app_name = 'dashboard'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^add-new-post/$', views.add_new_post, name='add_new_post'),
+    url(r'^components-blog-posts/$', views.components_blog_posts, name='components_blog_posts'),
 ]
