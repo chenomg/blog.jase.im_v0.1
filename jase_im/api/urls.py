@@ -23,5 +23,6 @@ router.register(r'bing-daily-wallpaper', views.Bing_Daily_Wallpaper, basename='b
 
 # app_name = 'api'
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    url(r'^v1/', include(router.urls)),
+    url(r'^image/', views.ImageView.as_view(), name='image'),
 ]
