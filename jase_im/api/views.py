@@ -10,7 +10,7 @@ from rest_framework.response import Response
 # Create your views here.
 
 
-class Bing_Daily_Wallpaper(viewsets.ViewSet):
+class Bing_Daily_Wallpaper(APIView):
     def get(self, request, format=None):
         request_url = 'http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN'
         base_url = 'http://s.cn.bing.net'
@@ -22,4 +22,11 @@ class Bing_Daily_Wallpaper(viewsets.ViewSet):
 
 class ImageView(APIView):
     def get(self, request, format=None):
-        return HttpResponse('post success!')
+        return HttpResponse('Image GET success!')
+
+    def post(self, request, format=None):
+        img = request.FILES.get('image', '未上传成功')
+        with open('media/api/{}'.format(img), 'wb+') as f:
+            for chunk in img.chunks():
+                f.write(chunk)
+        return HttpResponse('Image:{} Post success!'.format(img))

@@ -19,10 +19,10 @@ from rest_framework.routers import DefaultRouter
 from api import views
 
 router = DefaultRouter()
-router.register(r'bing-daily-wallpaper', views.Bing_Daily_Wallpaper, basename='bing')
 
 # app_name = 'api'
 urlpatterns = [
     url(r'^v1/', include(router.urls)),
     url(r'^image/', views.ImageView.as_view(), name='image'),
+    url(r'^bing-daily-wallpaper/', views.Bing_Daily_Wallpaper.as_view(), name='bing_wallpaper'),
 ]
