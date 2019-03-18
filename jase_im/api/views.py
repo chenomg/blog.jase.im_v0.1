@@ -2,6 +2,7 @@ import json
 
 # from django.shortcuts import render
 from django.http import HttpResponse
+from django.shortcuts import redirect
 import requests
 from rest_framework.views import APIView
 from rest_framework import viewsets
@@ -17,7 +18,7 @@ class Bing_Daily_Wallpaper(APIView):
         res = requests.get(request_url)
         data = json.loads(res.content)
         img_url = base_url + data['images'][0]['url']
-        return Response(img_url)
+        return redirect(img_url)
 
 
 class ImageView(APIView):
