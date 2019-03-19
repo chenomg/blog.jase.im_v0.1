@@ -1,4 +1,5 @@
 import json
+import os
 
 # from django.shortcuts import render
 from django.http import HttpResponse
@@ -7,7 +8,11 @@ import requests
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
+from jase_im.settings import MEDIA_ROOT
+from api.models import ImageHostingModel
+from api.forms import UploadImageForm
 # Create your views here.
 
 
@@ -22,12 +27,37 @@ class Bing_Daily_Wallpaper(APIView):
 
 
 class ImageView(APIView):
-    def get(self, request, format=None):
-        return HttpResponse('Image GET success!')
+    """
+    用于图床的上传及查看
+    """
+    Base_Url = '127.0.0.1:8000'
+    ret = {
+        "code": 1001, # 业务自定义状态码
+        "msg": '', # 请求状态描述，调试用
+        "data": {}, # 请求数据，对象或数组均可
+        "extra": {}, # 全局附加数据，字段、内容不定
+    }
 
-    def post(self, request, format=None):
-        img = request.FILES.get('image', '未上传成功')
-        with open('media/api/{}'.format(img), 'wb+') as f:
-            for chunk in img.chunks():
-                f.write(chunk)
-        return HttpResponse('Image:{} Post success!'.format(img))
+    def get(self, request, version, slug=None):
+        if slug is not None:
+            if ImageHostingModel.objects.filter(slug=slug):
+                img = ImageHostingModel.objects.get(slug=slug)
+                image_open = open(os.path.join(MEDIA_ROOT, str(img.image_upload)), 'rb').read()
+                return HttpResponse(image_open, content_type='image/jpeg')
+        return Response('image not found')
+
+    def post(self, request, version):
+        new_img = request.FILES.get('image')
+        if new_img:
+            # with open('media/api/{}'.format(img), 'wb+') as f:
+            #     for chunk in img.chunks():
+            #         f.write(chunk)
+            instance = ImageHostingModel(title=str(request.FILES.get('image')), image_upload=new_img)
+            instance.save()
+            self.ret['code'] = 1001
+            self.ret['msg'] = '图片上传成功'
+            self.ret['data']['url'] = self.Base_Url + reverse('image-get', kwargs={'version': 'v1', 'slug': instance.slug})
+        else:
+            self.ret['code'] = 2001
+            self.ret['msg'] = '图片上传失败'
+        return Response(data=self.ret)

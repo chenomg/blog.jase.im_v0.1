@@ -1,25 +1,33 @@
+from datetime import datetime
+
 from django.db import models
 from uuslug import slugify
 from blog.models import gene_rand_code
 
 # Create your models here.
 
+
 def user_file_path(instance, filename):
-    return "user_{}/file/{}".format(instance.user.username, filename)
+    return "api/file/{}".format(filename)
+
 
 def user_image_path(instance, filename):
-    return "user_{}/image/{}".format(instance.user.username, filename)
+    return "api/image/{}".format(filename)
+    # return "user_{}/image/{}".format(instance.user.username, filename)
 
-class FileBaseModel(models.Model):
+
+class FileHostingModel(models.Model):
     title = models.CharField(max_length=32, blank=False)
-    slug = models.CharField(unique=True, max_length=64)
+    slug = models.CharField(unique=True, max_length=64, blank=True)
     created_time = models.DateField(auto_now_add=True)
+    file_upload = models.FileField(upload_to=user_file_path)
 
-class FileHostingModel(FileBaseModel):
-    upload = models.FileField(upload_to=user_file_path)
 
-class ImageHostingModel(FileBaseModel):
-    upload = models.ImageField(upload_to=user_image_path)
+class ImageHostingModel(models.Model):
+    title = models.CharField(max_length=32, blank=False)
+    slug = models.CharField(unique=True, max_length=64, blank=True)
+    created_time = models.DateField(auto_now_add=True)
+    image_upload = models.ImageField(upload_to=user_image_path)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -33,4 +41,3 @@ class ImageHostingModel(FileBaseModel):
 
     def __str__(self):
         return self.title
-
