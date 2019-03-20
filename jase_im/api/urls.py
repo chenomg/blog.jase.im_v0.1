@@ -23,7 +23,7 @@ router = DefaultRouter()
 # app_name = 'api'
 urlpatterns = [
     # url(r'^v1/', include(router.urls)),
-    url(r'^(?P<version>(v1|v2))/image/(?P<slug>.+)/', views.ImageView.as_view(), name='image-get'),
-    url(r'^(?P<version>(v1|v2))/image/', views.ImageView.as_view(), name='image-post'),
-    url(r'^bing-daily-wallpaper/', views.Bing_Daily_Wallpaper.as_view(), name='bing_wallpaper'),
+    url(r'^(?P<version>(v1))/image/(?P<slug>.+)/', views.ImageView.as_view(), name='image-get'),
+    url(r'^(?P<version>(v1))/image/', views.ImageView.as_view(), name='image-post'),
+    url(r'^(?P<version>(v1))/bing-daily-wallpaper/', views.Bing_Daily_Wallpaper.as_view(), name='bing_wallpaper'),
 ]
