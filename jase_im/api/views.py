@@ -2,13 +2,14 @@ import json
 import os
 
 # from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
 import requests
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework import status
 
 from jase_im.settings import MEDIA_ROOT
 from api.models import ImageHostingModel
@@ -38,15 +39,18 @@ class ImageView(APIView):
         "extra": {},  # 全局附加数据，字段、内容不定
     }
 
+    def get_object(self, slug):
+        try:
+            return ImageHostingModel.objects.get(slug=slug)
+        except ImageHostingModel.DoesNotExist:
+            raise Http404
+
     def get(self, request, version, slug=None):
-        if slug is not None:
-            if ImageHostingModel.objects.filter(slug=slug):
-                img = ImageHostingModel.objects.get(slug=slug)
-                image_open = open(
-                    os.path.join(MEDIA_ROOT, str(img.image_upload)),
-                    'rb').read()
-                return HttpResponse(image_open, content_type='image/jpeg')
-        return Response('image not found')
+        img = self.get_object(slug)
+        image_open = open(
+            os.path.join(MEDIA_ROOT, str(img.image_upload)),
+            'rb').read()
+        return HttpResponse(image_open, content_type='image/jpeg')
 
     def post(self, request, version):
         new_img = request.FILES.get('image')
@@ -64,4 +68,12 @@ class ImageView(APIView):
         else:
             self.ret['code'] = 2001
             self.ret['msg'] = '图片上传失败'
-        return Response(data=self.ret)
+        return Response(data=self.ret, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, version, slug=None):
+        img = self.get_object(slug)
+        img.delete()
+        self.ret['code'] = 3001
+        self.ret['msg'] = '图片删除成功'
+        self.ret['data'] = {}
+        return Response(data=self.ret, status=status.HTTP_204_NO_CONTENT)
