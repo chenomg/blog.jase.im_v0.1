@@ -49,13 +49,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'api',
+    'homepage',
     'markdown',
     'mdeditor',
     'registration',
     'google_analytics',
     'debug_toolbar',
     'rest_framework',
-    'homepage',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -76,9 +78,9 @@ GOOGLE_ANALYTICS = {
 REST_FRAMEWORK = {
     # Use Django's standard 'django.contrib.auth' permission,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    # 'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    # ]
 }
 
 ROOT_URLCONF = 'jase_im.urls'

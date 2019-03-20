@@ -1,6 +1,7 @@
 # custom
 *.key
 jase_im/media/
+jase_im/.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

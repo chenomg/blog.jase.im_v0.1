@@ -20,7 +20,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
-from .forms import CommentForm, UserProfileForm, UserUpdateForm, MDEditorModelForm
+from blog.forms import CommentForm, UserProfileForm, UserUpdateForm, MDEditorModelForm
 from blog.serializers import PostGetSerializer, PostAddSerializer
 from blog.models import Category, Tag, Post, Comment, Page, UserProfile
 
