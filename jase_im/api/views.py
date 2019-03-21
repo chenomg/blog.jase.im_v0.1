@@ -1,10 +1,10 @@
 import json
 import os
 
+import requests
 # from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
-import requests
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -13,7 +13,8 @@ from rest_framework import status
 
 from jase_im.settings import MEDIA_ROOT
 from api.models import ImageHostingModel
-
+from api.utils.serializers import ImageGetSerializer
+from api.utils.url import get_image_url
 # Create your views here.
 
 
@@ -44,27 +45,30 @@ class ImageView(APIView):
             return ImageHostingModel.objects.get(slug=slug)
         except ImageHostingModel.DoesNotExist:
             raise Http404
-
+    
     def get(self, request, version, slug=None):
-        img = self.get_object(slug)
-        image_open = open(
-            os.path.join(MEDIA_ROOT, str(img.image_upload)),
-            'rb').read()
-        return HttpResponse(image_open, content_type='image/jpeg')
+        if slug is not None:
+            img = self.get_object(slug)
+            image_open = open(
+                os.path.join(MEDIA_ROOT, str(img.image_upload)),
+                'rb').read()
+            return HttpResponse(image_open, content_type='image/jpeg')
+        else:
+            imgs = ImageHostingModel.objects.all()
+            serializer = ImageGetSerializer(imgs, many=True)
+            return Response(serializer.data)
 
     def post(self, request, version):
         new_img = request.FILES.get('image')
         if new_img:
+            print('new image post')
             instance = ImageHostingModel(
                 title=str(request.FILES.get('image')), image_upload=new_img)
+            print('new image')
             instance.save()
             self.ret['code'] = 1001
             self.ret['msg'] = '图片上传成功'
-            self.ret['data']['url'] = reverse(
-                'image-get', kwargs={
-                    'version': 'v1',
-                    'slug': instance.slug
-                })
+            self.ret['data']['url'] = self.get_image_url(instance)
         else:
             self.ret['code'] = 2001
             self.ret['msg'] = '图片上传失败'
