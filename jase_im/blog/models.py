@@ -124,13 +124,12 @@ class Comment(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, primary_key=True)
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     website = models.URLField(blank=True)
     picture = models.ImageField(upload_to='profile_images', blank=True)
 
     def __str__(self):
         return self.user.username
-
 
 class Vistor(models.Model):
     """

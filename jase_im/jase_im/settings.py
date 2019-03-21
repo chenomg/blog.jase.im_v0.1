@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'google_analytics',
     'debug_toolbar',
     'rest_framework',
+    'rest_framework.authtoken',
     'dashboard',
 ]
 
@@ -81,6 +82,7 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     # ]
+    'DEFAULT_AUTHENTICATION_CLASSES': ['api.utils.auth.Authentication',]
 }
 
 ROOT_URLCONF = 'jase_im.urls'

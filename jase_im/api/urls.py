@@ -25,5 +25,6 @@ urlpatterns = [
     # url(r'^v1/', include(router.urls)),
     url(r'^(?P<version>(v1))/image/(?P<slug>.+)/', views.ImageView.as_view(), name='image-get'),
     url(r'^(?P<version>(v1))/image/', views.ImageView.as_view(), name='image-post'),
+    url(r'^(?P<version>(v1))/auth/', views.Auth.as_view(), name='auth'),
     url(r'^(?P<version>(v1))/bing-daily-wallpaper/', views.Bing_Daily_Wallpaper.as_view(), name='bing_wallpaper'),
 ]
