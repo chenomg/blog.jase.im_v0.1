@@ -27,4 +27,4 @@ class ImageGetSerializer(serializers.ModelSerializer):
         return get_image_url(obj)
     class Meta:
         model = ImageHostingModel
-        fields = ('title', 'slug', 'created_time', 'image_url')
+        fields = ('title', 'slug', 'user', 'created_time', 'image_url')

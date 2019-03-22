@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 # from blog.models import UserToken
 
 
-class Authentication(BaseAuthentication):
+class TokenAuthentication(BaseAuthentication):
     def authenticate(self, request):
         token = request.META.get('HTTP_TOKEN')
         token_obj = Token.objects.filter(key=token).first()

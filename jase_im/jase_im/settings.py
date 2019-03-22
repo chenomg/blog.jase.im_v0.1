@@ -79,10 +79,8 @@ GOOGLE_ANALYTICS = {
 REST_FRAMEWORK = {
     # Use Django's standard 'django.contrib.auth' permission,
     # or allow read-only access for unauthenticated users.
-    # 'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ]
-    'DEFAULT_AUTHENTICATION_CLASSES': ['api.utils.auth.Authentication',]
+    'DEFAULT_AUTHENTICATION_CLASSES': ['api.utils.auth.TokenAuthentication',],
+    'DEFAULT_PERMISSION_CLASSES': ['api.utils.permissions.HasTokenOrReadOnly',],
 }
 
 ROOT_URLCONF = 'jase_im.urls'

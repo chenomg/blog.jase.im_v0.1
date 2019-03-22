@@ -27,6 +27,7 @@ class FileHostingModel(models.Model):
 class ImageHostingModel(models.Model):
     title = models.CharField(max_length=32, blank=False)
     slug = models.CharField(unique=True, max_length=64, blank=True)
+    user = models.ForeignKey(User, null=True)
     created_time = models.DateField(auto_now_add=True)
     image_upload = models.ImageField(upload_to=user_image_path)
 

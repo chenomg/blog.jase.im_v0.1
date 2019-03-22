@@ -10,7 +10,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 
 from jase_im.settings import MEDIA_ROOT
 from api.models import ImageHostingModel
@@ -31,10 +31,12 @@ class Bing_Daily_Wallpaper(APIView):
 
 
 class ImageView(APIView):
-    # authentication_classes = []
     """
     用于图床的上传及查看
     """
+    # authentication_classes = []
+    permission_classes = [AllowAny]
+
     ret = {
         "code": 1001,  # 业务自定义状态码
         "msg": '',  # 请求状态描述，调试用
@@ -56,9 +58,18 @@ class ImageView(APIView):
                 'rb').read()
             return HttpResponse(image_open, content_type='image/jpeg')
         else:
-            imgs = ImageHostingModel.objects.all()
+            ret = {
+                "code": 1001,  # 业务自定义状态码
+                "msg": None, # 请求状态描述，调试用
+                "data": {},  # 请求数据，对象或数组均可
+                "extra": {},  # 全局附加数据，字段、内容不定
+            }
+            imgs = ImageHostingModel.objects.filter(user=request.user)
             serializer = ImageGetSerializer(imgs, many=True)
-            return Response(serializer.data)
+            ret['msg'] = 'user：{} 的图片清单获取成功'.format(request.user)
+            ret['data']['total'] = len(imgs)
+            ret['data']['list'] = serializer.data
+            return Response(ret)
 
     def post(self, request, version):
         new_img = request.FILES.get('image')
@@ -69,6 +80,7 @@ class ImageView(APIView):
             self.ret['code'] = 1001
             self.ret['msg'] = '图片上传成功'
             self.ret['data']['url'] = get_image_url(instance)
+            print('new image')
         else:
             self.ret['code'] = 2001
             self.ret['msg'] = '图片上传失败'
