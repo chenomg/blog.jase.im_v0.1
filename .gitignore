@@ -2,6 +2,7 @@
 *.key
 jase_im/media/
 jase_im/.idea/
+jase_im/logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

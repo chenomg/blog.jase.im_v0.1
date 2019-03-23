@@ -30,19 +30,21 @@ md = Markdown(extensions=[
     TocExtension(slugify=slugify),
 ])
 
+def get_remote_ip(request):
+    return request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR'))
 
 def index(request):
     login_user = get_login_user(request)
     query = request.GET.get('query')
     if query:
         logging.info('用户: {}, IP: {}, 打开主页, query={}'.format(
-            login_user, request.META['REMOTE_ADDR'], query))
+            login_user, get_remote_ip(request), query))
         posts = Post.objects.filter(
             Q(title__icontains=query)
             | Q(publish_content__icontains=query)).order_by('-modified_time')
     else:
         logging.info('用户: {}, IP: {}, 打开主页'.format(
-            login_user, request.META['REMOTE_ADDR']))
+            login_user, get_remote_ip(request)))
         posts = Post.objects.filter(is_publish=True).order_by('-modified_time')
     for post in posts:
         post.publish_excerpt = md.convert(post.publish_excerpt)
@@ -82,7 +84,7 @@ def index(request):
 def about(request):
     login_user = get_login_user(request)
     logging.info('用户: {}, IP: {}, 打开about'.format(login_user,
-                                                  request.META['REMOTE_ADDR']))
+                                                  get_remote_ip(request)))
     page = get_object_or_404(Page, slug='about')
     page.views += 1
     page.save()
@@ -96,7 +98,7 @@ def post_detail(request, slug):
     login_user = get_login_user(request)
     post = get_object_or_404(Post, slug=slug)
     logging.info('用户: {}, IP: {}, 打开post: {} - {}'.format(
-        login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+        login_user, get_remote_ip(request), post.id, post.slug))
     post.views = post.views + 1
     post.save()
     post.publish_content = md.convert(post.publish_content)
@@ -119,7 +121,7 @@ def comment_submit(request):
     post_slug = request.POST['post_slug']
     post = get_object_or_404(Post, slug=post_slug)
     logging.debug('用户: {}, IP: {}, 评论-准备接收, post: {} - {}'.format(
-        login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+        login_user, get_remote_ip(request), post.id, post.slug))
     if request.method == 'POST':
         form = CommentForm(request.POST)
         response_data = {
@@ -129,7 +131,7 @@ def comment_submit(request):
         }
         if form.is_valid():
             logging.debug('用户: {}, IP: {}, 评论-接收有效, post: {} - {}'.format(
-                login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+                login_user, get_remote_ip(request), post.id, post.slug))
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
             content = form.cleaned_data['content']
@@ -140,11 +142,11 @@ def comment_submit(request):
             response_data['content'] = content
             logging.info(
                 '用户: {}, IP: {}, 评论-成功, post: {} - {}, comment-id: {}'.format(
-                    comment.id, login_user, request.META['REMOTE_ADDR'],
+                    comment.id, login_user, get_remote_ip(request),
                     post.id, post.slug))
         else:
             logging.warn('用户: {}, IP: {}, 评论-数据无效, post: {} - {}'.format(
-                login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+                login_user, get_remote_ip(request), post.id, post.slug))
         return HttpResponse(
             json.dumps(response_data), content_type='application/json')
 
@@ -152,7 +154,7 @@ def comment_submit(request):
 def category(request):
     login_user = get_login_user(request)
     logging.info('用户: {}, IP: {}, 打开Category'.format(
-        login_user, request.META['REMOTE_ADDR']))
+        login_user, get_remote_ip(request)))
     categories = Category.objects.all().order_by('-name')
     posts = Post.objects.filter(is_publish=True)
     context = {
@@ -166,7 +168,7 @@ def category(request):
 def archive(request):
     login_user = get_login_user(request)
     logging.info('用户: {}, IP: {}, 打开存档'.format(login_user,
-                                               request.META['REMOTE_ADDR']))
+                                               get_remote_ip(request)))
     posts = Post.objects.filter(is_publish=True).order_by('-created_time')
     dates = set([(p.created_time.year, p.created_time.month) for p in posts])
     # 存档页面月份倒序
@@ -179,7 +181,7 @@ def archive(request):
 def tag_list_show(request):
     login_user = get_login_user(request)
     logging.info('用户: {}, IP: {}, 打开tag_list_show'.format(
-        login_user, request.META['REMOTE_ADDR']))
+        login_user, get_remote_ip(request)))
     tags = Tag.objects.all().order_by('slug')
     context = {'tags': tags, 'login_user': login_user}
     return render(request, 'blog/tags_list_show.html', context=context)
@@ -190,13 +192,13 @@ def tag_show(request, tag_slug):
     try:
         tag = Tag.objects.get(slug=tag_slug)
         logging.info('用户: {}, IP: {}, 打开tag: {}'.format(
-            login_user, request.META['REMOTE_ADDR'], tag.slug))
+            login_user, get_remote_ip(request), tag.slug))
         posts = Tag.objects.get(slug=tag_slug).post_set.filter(is_publish=True)
         for p in posts:
             p.publish_excerpt = md.convert(p.publish_excerpt)
     except Exception as e:
         logging.warn('用户: {}, IP: {}, 打开tag失败: {}'.format(
-            request.META['REMOTE_ADDR'], tag_slug, login_user))
+            get_remote_ip(request), tag_slug, login_user))
         tag = False
         posts = None
     context = {
@@ -215,12 +217,12 @@ def register_profile(request):
     """
     login_user = get_login_user(request)
     logging.info('用户: {}, IP: {}, 打开登陆用户信息编辑'.format(
-        login_user, request.META['REMOTE_ADDR']))
+        login_user, get_remote_ip(request)))
     if UserProfile.objects.filter(user=login_user):
         userprofile = UserProfile.objects.get(user=login_user)
     else:
         logging.warn('用户: {}, IP: {}, 登陆用户信息详情暂无, 即将生成'.format(
-            login_user, request.META['REMOTE_ADDR']))
+            login_user, get_remote_ip(request)))
         userprofile = UserProfile(user=login_user)
         userprofile.save()
     userform = UserUpdateForm({
@@ -229,18 +231,18 @@ def register_profile(request):
     })
     if request.method == 'POST':
         logging.info('用户: {}, IP: {}, 用户信息变更提交'.format(
-            login_user, request.META['REMOTE_ADDR']))
+            login_user, get_remote_ip(request)))
         userform = UserUpdateForm(request.POST)
         if userform.is_valid():
             logging.info('用户: {}, IP: {}, 用户信息变更提交有效'.format(
-                login_user, request.META['REMOTE_ADDR']))
+                login_user, get_remote_ip(request)))
             login_user.email = userform.cleaned_data['email']
             login_user.save()
             userprofile.website = userform.cleaned_data['website']
         picture = request.FILES.get('avator')
         if picture:
             logging.info('用户: {}, IP: {}, 用户信息变更照片提交有效'.format(
-                login_user, request.META['REMOTE_ADDR']))
+                login_user, get_remote_ip(request)))
             userprofile.picture = picture
         userprofile.save()
     context = {
@@ -256,29 +258,29 @@ def update_post(request, slug):
     login_user = get_login_user(request)
     post = get_object_or_404(Post, slug=slug, author=login_user)
     logging.info('用户: {}, IP: {}, 更新开始: 文章: {} - {}'.format(
-        login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+        login_user, get_remote_ip(request), post.id, post.slug))
     post_form = MDEditorModelForm(instance=post)
     context = {'post_form': post_form, 'post': post, 'login_user': login_user}
     if request.method == 'POST':
         logging.info('用户: {}, IP: {}, 更新提交: 文章: {} - {}'.format(
-            login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+            login_user, get_remote_ip(request), post.id, post.slug))
         form = MDEditorModelForm(request.POST)
         context['post_form'] = form
         if form.is_valid():
             logging.info('用户: {}, IP: {}, 更新提交有效: 文章: {} - {}'.format(
-                login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+                login_user, get_remote_ip(request), post.id, post.slug))
             update_is_publish = request.POST.getlist('is_publish')
             if post.title != form.cleaned_data['title']:
                 post.slug = ''
                 post.title = form.cleaned_data['title']
                 logging.info('用户: {}, IP: {}, 更新标题变更: 文章: {} - {}'.format(
-                    login_user, request.META['REMOTE_ADDR'], post.id,
+                    login_user, get_remote_ip(request), post.id,
                     post.slug))
             post.content = form.cleaned_data['content']
             post.excerpt = form.cleaned_data['excerpt']
             if update_is_publish:
                 logging.info('用户: {}, IP: {}, 更新完成时将同时发布: 文章: {} - {}'.format(
-                    login_user, request.META['REMOTE_ADDR'], post.id,
+                    login_user, get_remote_ip(request), post.id,
                     post.slug))
                 post.is_publish = True
                 post.publish_content = post.content
@@ -297,7 +299,7 @@ def update_post(request, slug):
                     except exception as e:
                         logging.warn(
                             '用户: {}, IP: {}, tag: {} 已存在,不需要新建. 文章: {} - {}'.
-                            format(login_user, request.META['REMOTE_ADDR'], t,
+                            format(login_user, get_remote_ip(request), t,
                                    post.id, post.slug))
                     tag = Tag.objects.get(name=t)
                     post.tags.add(tag)
@@ -305,19 +307,19 @@ def update_post(request, slug):
             post.save()
             if update_is_publish:
                 logging.info('用户: {}, IP: {}, 更新发布: 文章: {} - {}'.format(
-                    login_user, request.META['REMOTE_ADDR'], post.id,
+                    login_user, get_remote_ip(request), post.id,
                     post.slug))
                 return HttpResponseRedirect(reverse('blog:index'))
             else:
                 # 后续使用ajax实现
                 logging.info('用户: {}, IP: {}, 更新保存: 文章: {} - {}'.format(
-                    login_user, request.META['REMOTE_ADDR'], post.id,
+                    login_user, get_remote_ip(request), post.id,
                     post.slug))
                 return HttpResponseRedirect(
                     reverse('blog:update_post', args=[post.slug]))
         else:
             logging.warn('用户: {}, IP: {}, 更新提交无效: 文章: {} - {}'.format(
-                login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+                login_user, get_remote_ip(request), post.id, post.slug))
     return render(request, 'blog/post_update_form.html', context=context)
 
 
@@ -325,17 +327,17 @@ def update_post(request, slug):
 def add_post(request):
     login_user = get_login_user(request)
     logging.info('用户: {}, IP: {}, Add_Post开始'.format(
-        login_user, request.META['REMOTE_ADDR']))
+        login_user, get_remote_ip(request)))
     post_form = MDEditorModelForm()
     context = {'post_form': post_form, 'login_user': login_user}
     if request.method == 'POST':
         logging.info('用户: {}, IP: {}, Add_Post提交'.format(
-            login_user, request.META['REMOTE_ADDR']))
+            login_user, get_remote_ip(request)))
         form = MDEditorModelForm(request.POST)
         context['post_form'] = form
         if form.is_valid():
             logging.info('用户: {}, IP: {}, Add_Post提交信息有效'.format(
-                login_user, request.META['REMOTE_ADDR']))
+                login_user, get_remote_ip(request)))
             is_publish = request.POST.getlist('is_publish')
             post = Post()
             post.title = form.cleaned_data['title']
@@ -347,7 +349,7 @@ def add_post(request):
             # 保存后excerpt若为空值则自动生成
             post.save()
             logging.info('用户: {}, IP: {}, Add_Post提交已保存: 文章: {} - {}'.format(
-                login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+                login_user, get_remote_ip(request), post.id, post.slug))
             post.tags = form.cleaned_data['tags']
             add_tags = form.cleaned_data['add_tags']
             if add_tags:
@@ -359,32 +361,32 @@ def add_post(request):
                     except exception as e:
                         logging.warn(
                             '用户: {}, IP: {}, Add_Post标签 {} 已存在: 文章: {} - {}'.
-                            format(login_user, request.META['REMOTE_ADDR'], t,
+                            format(login_user, get_remote_ip(request), t,
                                    post.id, post.slug))
                     tag = Tag.objects.get(name=t)
                     post.tags.add(tag)
             post.save()
             logging.info('用户: {}, IP: {}, Add_Post标签已保存: 文章: {} - {}'.format(
-                login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+                login_user, get_remote_ip(request), post.id, post.slug))
             if is_publish:
                 post.is_publish = True
                 post.publish_content = post.content
                 post.publish_excerpt = post.excerpt
                 post.save()
                 logging.info('用户: {}, IP: {}, Add_Post已发布: 文章: {} - {}'.format(
-                    login_user, request.META['REMOTE_ADDR'], post.id,
+                    login_user, get_remote_ip(request), post.id,
                     post.slug))
                 return HttpResponseRedirect(reverse('blog:index'))
             else:
                 logging.info('用户: {}, IP: {}, Add_Post已保存: 文章: {} - {}'.format(
-                    login_user, request.META['REMOTE_ADDR'], post.id,
+                    login_user, get_remote_ip(request), post.id,
                     post.slug))
                 # 后续使用ajax实现
                 return HttpResponseRedirect(
                     reverse('blog:update_post', args=[post.slug]))
         else:
             logging.warn('用户: {}, IP: {}, Add_Post提交无效: 文章: {} - {}'.format(
-                login_user, request.META['REMOTE_ADDR'], post.id, post.slug))
+                login_user, get_remote_ip(request), post.id, post.slug))
     return render(request, 'blog/add_post.html', context=context)
 
 
@@ -393,7 +395,7 @@ def user_show(request, username):
     login_user = get_login_user(request)
     show_user = get_object_or_404(User, username=username)
     logging.info('用户: {}, IP: {}, 用户展示, 正在查看: {}'.format(
-        login_user, request.META['REMOTE_ADDR'], show_user))
+        login_user, get_remote_ip(request), show_user))
     if UserProfile.objects.filter(user=show_user):
         userprofile = UserProfile.objects.get(user=show_user)
     else:

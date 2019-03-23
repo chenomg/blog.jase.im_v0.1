@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'google_analytics',
     'debug_toolbar',
     'rest_framework',
+    'rest_framework.authtoken',
     'dashboard',
 ]
 
@@ -78,9 +79,16 @@ GOOGLE_ANALYTICS = {
 REST_FRAMEWORK = {
     # Use Django's standard 'django.contrib.auth' permission,
     # or allow read-only access for unauthenticated users.
-    # 'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ]
+    'DEFAULT_AUTHENTICATION_CLASSES': ['api.utils.auth.AnonymousOrTokenAuthentication',],
+    'DEFAULT_PERMISSION_CLASSES': ['api.utils.permissions.HasTokenOrReadOnly',],
+    # 'DEFAULT_PERMISSION_CLASSES': ['rest_framework.authentication.BasicAuthentication',],
+    # 'IMAGE_TYPES': ['jpg', 'jpeg', 'png', 'bmp', 'icon', 'gif'],
+    'DEFAULT_THROTTLE_CLASSES': ['api.utils.throttle.AnonymousThrottle'],
+    # 'DEFAULT_THROTTLE_CLASSES': ['api.utils.throttle.NormalThrottle', 'api.utils.throttle.AnonymousThrottle'],
+    'DEFAULT_THROTTLE_RATES': {
+        'AnonymousUser': '10/m',
+        'NormalUser': '30/m',
+    },
 }
 
 ROOT_URLCONF = 'jase_im.urls'
