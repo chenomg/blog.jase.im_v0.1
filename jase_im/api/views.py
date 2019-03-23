@@ -15,13 +15,14 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.settings import api_settings
+from rest_framework.settings import DEFAULTS
 
 from jase_im.settings import MEDIA_ROOT
 from api.models import ImageHostingModel
 from api.utils.serializers import ImageGetSerializer
 from api.utils.url import get_image_url
 from api.utils.permissions import HasTokenOrReadOnly
-from rest_framework.settings import DEFAULTS
+from api.utils.throttle import AnonymousThrottle, NormalThrottle
 # Create your views here.
 
 
@@ -40,6 +41,8 @@ class ImageView(APIView):
     """
     用于图片的上传及查看
     """
+
+    throttle_classes = [NormalThrottle]
 
     DEFAULTS['IMAGE_TYPES'] = ('jpg', 'jpeg', 'png', 'bmp', 'gif', 'icon')
     image_types = api_settings.IMAGE_TYPES
@@ -118,6 +121,7 @@ class Auth(APIView):
     """
     authentication_classes = []
     permission_classes = [AllowAny]
+    throttle_classes = [AnonymousThrottle]
 
     def auth(self, request):
         ret = {
