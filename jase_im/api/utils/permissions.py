@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AnonymousUser
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from api.models import UserType
 
@@ -16,6 +17,6 @@ class HasTokenOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         return bool(
             request.method in SAFE_METHODS or
-            request.user
+            not isinstance(request.user, AnonymousUser)
         )
 

@@ -5,17 +5,23 @@ import requests
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import AnonymousUser
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
 from rest_framework.authtoken.models import Token
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.settings import api_settings
 
 from jase_im.settings import MEDIA_ROOT
 from api.models import ImageHostingModel
 from api.utils.serializers import ImageGetSerializer
 from api.utils.url import get_image_url
+from api.utils.permissions import HasTokenOrReadOnly
+from rest_framework.settings import DEFAULTS
 # Create your views here.
 
 
@@ -32,17 +38,11 @@ class Bing_Daily_Wallpaper(APIView):
 
 class ImageView(APIView):
     """
-    用于图床的上传及查看
+    用于图片的上传及查看
     """
-    # authentication_classes = []
-    permission_classes = [AllowAny]
 
-    ret = {
-        "code": 1001,  # 业务自定义状态码
-        "msg": '',  # 请求状态描述，调试用
-        "data": {},  # 请求数据，对象或数组均可
-        "extra": {},  # 全局附加数据，字段、内容不定
-    }
+    DEFAULTS['IMAGE_TYPES'] = ('jpg', 'jpeg', 'png', 'bmp', 'gif', 'icon')
+    image_types = api_settings.IMAGE_TYPES
 
     def get_object(self, slug):
         try:
@@ -56,14 +56,17 @@ class ImageView(APIView):
             image_open = open(
                 os.path.join(MEDIA_ROOT, str(img.image_upload)),
                 'rb').read()
-            return HttpResponse(image_open, content_type='image/jpeg')
+            return HttpResponse(image_open, content_type='image/{}'.format(img.format))
         else:
             ret = {
                 "code": 1001,  # 业务自定义状态码
                 "msg": None, # 请求状态描述，调试用
                 "data": {},  # 请求数据，对象或数组均可
-                "extra": {},  # 全局附加数据，字段、内容不定
+                # "extra": {},  # 全局附加数据，字段、内容不定
             }
+            if isinstance(request.user, AnonymousUser):
+                ret['msg'] = '未认证用户无法获取图片列表'
+                return Response(ret)
             imgs = ImageHostingModel.objects.filter(user=request.user)
             serializer = ImageGetSerializer(imgs, many=True)
             ret['msg'] = 'user：{} 的图片清单获取成功'.format(request.user)
@@ -72,30 +75,47 @@ class ImageView(APIView):
             return Response(ret)
 
     def post(self, request, version):
+        ret = {
+            "code": 2001,  # 业务自定义状态码
+            "msg": '图片上传失败', # 请求状态描述，调试用
+        }
         new_img = request.FILES.get('image')
         if new_img:
-            instance = ImageHostingModel(
-                title=str(request.FILES.get('image')), image_upload=new_img)
-            instance.save()
-            self.ret['code'] = 1001
-            self.ret['msg'] = '图片上传成功'
-            self.ret['data']['url'] = get_image_url(instance)
-            print('new image')
-        else:
-            self.ret['code'] = 2001
-            self.ret['msg'] = '图片上传失败'
-        return Response(data=self.ret, status=status.HTTP_201_CREATED)
+            title=str(request.FILES.get('image'))
+            if '.' in title[1:]:
+                ext = title.split('.')[-1]
+                if ext.lower() in self.image_types:
+                    instance = ImageHostingModel(
+                        title=title, user=request.user, format=ext.lower(), image_upload=new_img)
+                    instance.save()
+                    ret = {
+                        "code": 1001,  # 业务自定义状态码
+                        "msg": '图片上传成功', # 请求状态描述，调试用
+                        "data": {'url': get_image_url(instance)},  # 请求数据，对象或数组均可
+                    }
+                else:
+                    ret['msg'] = '图片上传失败，图片类型不支持'
+                    return Response(ret)
+            else:
+                ret['msg'] = '图片上传失败，请检查文件名'
+                return Response(ret)
+        return Response(data=ret)
 
     def delete(self, request, version, slug=None):
         img = self.get_object(slug)
+        if img.user != request.user:
+            raise PermissionDenied('抱歉，无权限进行此操作')
         img.delete()
-        self.ret['code'] = 3001
-        self.ret['msg'] = '图片删除成功'
-        self.ret['data'] = {}
-        return Response(data=self.ret, status=status.HTTP_204_NO_CONTENT)
+        ret = {
+            "code": 3001,  # 业务自定义状态码
+            "msg": '图片删除成功', # 请求状态描述，调试用
+        }
+        return Response(data=ret)
 
 class Auth(APIView):
-
+    """
+    使用用户名及密码获取或更新用户token
+    """
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -137,9 +157,7 @@ class Auth(APIView):
     def post(self, request, version):
         """
         提交用户名及密码查看token
-        :param request:
-        :param version:
-        :return:
+        form-data中添加：_token_to_do: update, 则更新token并返回
         """
         user, token, ret = self.auth(request)
         _token_to_do = request._request.POST.get('token_to_do')
