@@ -22,7 +22,7 @@ from api.models import ImageHostingModel
 from api.utils.serializers import ImageGetSerializer
 from api.utils.url import get_image_url
 from api.utils.permissions import HasTokenOrReadOnly
-from api.utils.throttle import AnonymousThrottle, NormalThrottle
+from api.utils.throttle import AnonRateThrottle, UserRateThrottle
 # Create your views here.
 
 
@@ -41,9 +41,6 @@ class ImageView(APIView):
     """
     用于图片的上传及查看
     """
-
-    throttle_classes = [NormalThrottle]
-
     DEFAULTS['IMAGE_TYPES'] = ('jpg', 'jpeg', 'png', 'bmp', 'gif', 'icon')
     image_types = api_settings.IMAGE_TYPES
 
@@ -121,7 +118,6 @@ class Auth(APIView):
     """
     authentication_classes = []
     permission_classes = [AllowAny]
-    throttle_classes = [AnonymousThrottle]
 
     def auth(self, request):
         ret = {

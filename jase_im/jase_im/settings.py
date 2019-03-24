@@ -83,7 +83,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ['api.utils.permissions.HasTokenOrReadOnly',],
     # 'DEFAULT_PERMISSION_CLASSES': ['rest_framework.authentication.BasicAuthentication',],
     # 'IMAGE_TYPES': ['jpg', 'jpeg', 'png', 'bmp', 'icon', 'gif'],
-    'DEFAULT_THROTTLE_CLASSES': ['api.utils.throttle.AnonymousThrottle'],
+    'DEFAULT_THROTTLE_CLASSES': ['api.utils.throttle.AnonRateThrottle', 'api.utils.throttle.UserRateThrottle'],
     # 'DEFAULT_THROTTLE_CLASSES': ['api.utils.throttle.NormalThrottle', 'api.utils.throttle.AnonymousThrottle'],
     'DEFAULT_THROTTLE_RATES': {
         'AnonymousUser': '10/m',
