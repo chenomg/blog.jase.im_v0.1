@@ -86,11 +86,11 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': ['api.utils.throttle.AnonRateThrottle', 'api.utils.throttle.UserRateThrottle'],
     # 'DEFAULT_THROTTLE_CLASSES': ['api.utils.throttle.NormalThrottle', 'api.utils.throttle.AnonymousThrottle'],
     'DEFAULT_THROTTLE_RATES': {
-        'AnonymousUser': '10/m',
-        'NormalUser': '30/m',
+        'AnonymousUser': '5/m',
+        'NormalUser': '10/m',
     },
     # 设置代理数量
-    'NUM_PROXIES': 1,
+    # 'NUM_PROXIES': 1,
 }
 
 ROOT_URLCONF = 'jase_im.urls'

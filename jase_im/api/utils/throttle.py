@@ -1,6 +1,7 @@
 from rest_framework.throttling import SimpleRateThrottle
 from django.contrib.auth.models import AnonymousUser
 
+
 class AnonRateThrottle(SimpleRateThrottle):
     """
     Limits the rate of API calls that may be made by a anonymous users.
@@ -10,6 +11,7 @@ class AnonRateThrottle(SimpleRateThrottle):
     scope = 'AnonymousUser'
 
     def get_cache_key(self, request, view):
+        # if request.user.is_authenticated:
         if not isinstance(request.user, AnonymousUser):
             return None  # Only throttle unauthenticated requests.
 
@@ -17,7 +19,6 @@ class AnonRateThrottle(SimpleRateThrottle):
             'scope': self.scope,
             'ident': self.get_ident(request)
         }
-
 
 class UserRateThrottle(SimpleRateThrottle):
     """
@@ -30,11 +31,10 @@ class UserRateThrottle(SimpleRateThrottle):
     scope = 'NormalUser'
 
     def get_cache_key(self, request, view):
-        if not isinstance(request.user, AnonymousUser):
-        # if request.user.is_authenticated:
-            ident = request.user.pk
+        if isinstance(request.user, AnonymousUser):
+            return None
         else:
-            ident = self.get_ident(request)
+            ident = request.user.pk
 
         return self.cache_format % {
             'scope': self.scope,
