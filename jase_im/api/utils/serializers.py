@@ -23,8 +23,12 @@ class PostAddSerializer(serializers.ModelSerializer):
 
 class ImageGetSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
     def get_image_url(self, obj):
         return get_image_url(obj)
+    def get_username(self, obj):
+        return obj.user.username
     class Meta:
         model = ImageHostingModel
-        fields = ('title', 'slug', 'user', 'created_time', 'image_url')
+        fields = ('title', 'slug', 'username', 'created_time', 'image_url')
+        depth = 0
