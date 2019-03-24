@@ -21,8 +21,6 @@ from jase_im.settings import MEDIA_ROOT
 from api.models import ImageHostingModel
 from api.utils.serializers import ImageGetSerializer
 from api.utils.url import get_image_url
-from api.utils.permissions import HasTokenOrReadOnly
-from api.utils.throttle import AnonRateThrottle, UserRateThrottle
 # Create your views here.
 
 
