@@ -4,7 +4,7 @@
 from rest_framework import serializers
 from blog.models import Post
 from api.models import ImageHostingModel
-from api.utils.url import get_image_url
+from api.utils.reverse import get_image_url
 
 
 class PostGetSerializer(serializers.ModelSerializer):
@@ -24,11 +24,15 @@ class PostAddSerializer(serializers.ModelSerializer):
 class ImageGetSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
+    email = serializers.CharField(source='user.email')
+
     def get_image_url(self, obj):
         return get_image_url(obj)
+
     def get_username(self, obj):
         return obj.user.username
+
     class Meta:
         model = ImageHostingModel
-        fields = ('title', 'slug', 'username', 'created_time', 'image_url')
+        fields = ('title', 'slug', 'username', 'email', 'created_time', 'image_url')
         depth = 0
