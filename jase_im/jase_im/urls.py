@@ -20,6 +20,7 @@ from django.contrib import admin
 from blog import views
 from django.conf import settings
 from django.views.static import serve
+from .views import ssl_verify
 
 handler404 = views.page_not_found
 urlpatterns = [
@@ -34,6 +35,7 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('api.urls')),
+    url(r'^.well-known/acme-challenge/(?P<code>.*)', ssl_verify, name='ssl_verify'),
 ]
 if settings.DEBUG:
     import debug_toolbar
