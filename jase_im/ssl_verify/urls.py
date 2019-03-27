@@ -19,5 +19,5 @@ from ssl_verify.views import ssl_verify
 
 urlpatterns = [
     # url(r'^v1/', include(router.urls)),
-    url(r'^(?P<code>)/image/(?P<slug>.+)', ssl_verify, name='ssl_verify'),
+    url(r'^(?P<code>.*)', ssl_verify, name='ssl_verify'),
 ]
