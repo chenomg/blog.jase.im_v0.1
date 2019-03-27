@@ -13,19 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
-from rest_framework.routers import DefaultRouter
+from django.conf.urls import url
 
-from api import views
+from ssl_verify.views import ssl_verify
 
-router = DefaultRouter()
-
-# app_name = 'api'
 urlpatterns = [
     # url(r'^v1/', include(router.urls)),
-    url(r'^(?P<version>(v1))/image/(?P<slug>.+)/', views.ImageView.as_view(), name='image-get'),
-    url(r'^(?P<version>(v1))/image/', views.ImageView.as_view(), name='image-post'),
-    url(r'^(?P<version>(v1))/auth/', views.Auth.as_view(), name='auth'),
-    url(r'^(?P<version>(v1))/parser/', views.Parser.as_view(), name='parser'),
-    url(r'^(?P<version>(v1))/bing-daily-wallpaper/', views.Bing_Daily_Wallpaper.as_view(), name='bing_wallpaper'),
+    url(r'^(?P<code>)/image/(?P<slug>.+)', ssl_verify, name='ssl_verify'),
 ]

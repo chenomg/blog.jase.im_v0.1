@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'dashboard',
+    'ssl_verify',
 ]
 
 MIDDLEWARE = [
@@ -91,6 +92,11 @@ REST_FRAMEWORK = {
     },
     # 设置代理数量
     # 'NUM_PROXIES': 1,
+    "DEFAULT_VERSIONING_CLASS":"rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_VERSION":'v1',               #默认的版本
+    "ALLOWED_VERSIONS":['v1',],       #允许的版本
+    "VERSION_PARAM":'version',             #get方式url中参数的名字  ?version=xxxk
+    "DEFAULT_PARSER_CLASSES": ["rest_framework.parsers.JSONParser", "rest_framework.parsers.FormParser"],
 }
 
 ROOT_URLCONF = 'jase_im.urls'
@@ -217,7 +223,7 @@ ACCOUNT_ACTIVATION = 7
 # 自动登录
 REGISTRATION_AUTO_LOGIN = True
 # 登陆后跳转地址
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/blog/'
 # 登陆地址
 LOGIN_URL = '/accounts/login/'
 

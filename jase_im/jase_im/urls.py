@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('api.urls')),
+    url(r'^.well-known/acme-challenge/', include('ssl_verify.urls')),
 ]
 if settings.DEBUG:
     import debug_toolbar

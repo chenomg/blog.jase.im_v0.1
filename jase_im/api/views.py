@@ -20,7 +20,8 @@ from rest_framework.settings import DEFAULTS
 from jase_im.settings import MEDIA_ROOT
 from api.models import ImageHostingModel
 from api.utils.serializers import ImageGetSerializer
-from api.utils.url import get_image_url
+from api.utils.reverse import get_image_url
+
 # Create your views here.
 
 
@@ -47,18 +48,18 @@ class ImageView(APIView):
             return ImageHostingModel.objects.get(slug=slug)
         except ImageHostingModel.DoesNotExist:
             raise Http404
-    
+
     def get(self, request, version, slug=None):
         if slug is not None:
             img = self.get_object(slug)
             image_open = open(
-                os.path.join(MEDIA_ROOT, str(img.image_upload)),
-                'rb').read()
-            return HttpResponse(image_open, content_type='image/{}'.format(img.format))
+                os.path.join(MEDIA_ROOT, str(img.image_upload)), 'rb').read()
+            return HttpResponse(
+                image_open, content_type='image/{}'.format(img.format))
         else:
             ret = {
                 "code": 1001,  # 业务自定义状态码
-                "msg": None, # 请求状态描述，调试用
+                "msg": None,  # 请求状态描述，调试用
                 "data": {},  # 请求数据，对象或数组均可
                 # "extra": {},  # 全局附加数据，字段、内容不定
             }
@@ -75,21 +76,26 @@ class ImageView(APIView):
     def post(self, request, version):
         ret = {
             "code": 2001,  # 业务自定义状态码
-            "msg": '图片上传失败', # 请求状态描述，调试用
+            "msg": '图片上传失败',  # 请求状态描述，调试用
         }
         new_img = request.FILES.get('image')
         if new_img:
-            title=str(request.FILES.get('image'))
+            title = str(request.FILES.get('image'))
             if '.' in title[1:]:
                 ext = title.split('.')[-1]
                 if ext.lower() in self.image_types:
                     instance = ImageHostingModel(
-                        title=title, user=request.user, format=ext.lower(), image_upload=new_img)
+                        title=title,
+                        user=request.user,
+                        format=ext.lower(),
+                        image_upload=new_img)
                     instance.save()
                     ret = {
                         "code": 1001,  # 业务自定义状态码
-                        "msg": '图片上传成功', # 请求状态描述，调试用
-                        "data": {'url': get_image_url(instance)},  # 请求数据，对象或数组均可
+                        "msg": '图片上传成功',  # 请求状态描述，调试用
+                        "data": {
+                            'url': get_image_url(instance)
+                        },  # 请求数据，对象或数组均可
                     }
                 else:
                     ret['msg'] = '图片上传失败，图片类型不支持'
@@ -106,9 +112,10 @@ class ImageView(APIView):
         img.delete()
         ret = {
             "code": 3001,  # 业务自定义状态码
-            "msg": '图片删除成功', # 请求状态描述，调试用
+            "msg": '图片删除成功',  # 请求状态描述，调试用
         }
         return Response(data=ret)
+
 
 class Auth(APIView):
     """
@@ -120,7 +127,7 @@ class Auth(APIView):
     def auth(self, request):
         ret = {
             "code": 1001,  # 业务自定义状态码
-            "msg": None, # 请求状态描述，调试用
+            "msg": None,  # 请求状态描述，调试用
             "data": {},  # 请求数据，对象或数组均可
             "extra": {},  # 全局附加数据，字段、内容不定
         }
@@ -145,11 +152,10 @@ class Auth(APIView):
             ret['msg'] = '登陆请求异常'
         return (None, None, ret)
 
-
     def get(self, request, version):
         return Response({
             "code": 2001,  # 业务自定义状态码
-            "msg": '方法请求失败,请使用POST', # 请求状态描述，调试用
+            "msg": '方法请求失败,请使用POST',  # 请求状态描述，调试用
         })
 
     def post(self, request, version):
@@ -168,3 +174,8 @@ class Auth(APIView):
                 ret['extra'] = '令牌已更新'
         return Response(ret)
 
+
+class Parser(APIView):
+    # permission_classes = [AllowAny]
+    def post(self, request, version):
+        return Response(request.data)
