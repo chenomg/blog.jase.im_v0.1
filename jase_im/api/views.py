@@ -22,8 +22,6 @@ from api.models import ImageHostingModel
 from api.utils.serializers import ImageGetSerializer
 from api.utils.reverse import get_image_url
 
-# Create your views here.
-
 
 class Bing_Daily_Wallpaper(APIView):
     def get(self, request, version, format=None):

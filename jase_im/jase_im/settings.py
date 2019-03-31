@@ -80,23 +80,38 @@ GOOGLE_ANALYTICS = {
 REST_FRAMEWORK = {
     # Use Django's standard 'django.contrib.auth' permission,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_AUTHENTICATION_CLASSES': ['api.utils.auth.AnonymousOrTokenAuthentication',],
-    'DEFAULT_PERMISSION_CLASSES': ['api.utils.permissions.HasTokenOrReadOnly',],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'api.utils.auth.AnonymousOrTokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'api.utils.permissions.HasTokenOrReadOnly',
+    ],
     # 'DEFAULT_PERMISSION_CLASSES': ['rest_framework.authentication.BasicAuthentication',],
-    # 'IMAGE_TYPES': ['jpg', 'jpeg', 'png', 'bmp', 'icon', 'gif'],
-    'DEFAULT_THROTTLE_CLASSES': ['api.utils.throttle.AnonRateThrottle', 'api.utils.throttle.UserRateThrottle'],
-    # 'DEFAULT_THROTTLE_CLASSES': ['api.utils.throttle.NormalThrottle', 'api.utils.throttle.AnonymousThrottle'],
+    'IMAGE_TYPES': ['jpg', 'jpeg', 'png', 'bmp', 'icon', 'gif'],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'api.utils.throttle.AnonRateThrottle',
+        'api.utils.throttle.UserRateThrottle'
+    ],
     'DEFAULT_THROTTLE_RATES': {
         'AnonymousUser': '5/m',
         'NormalUser': '10/m',
     },
     # 设置代理数量
     # 'NUM_PROXIES': 1,
-    "DEFAULT_VERSIONING_CLASS":"rest_framework.versioning.URLPathVersioning",
-    "DEFAULT_VERSION":'v1',               #默认的版本
-    "ALLOWED_VERSIONS":['v1',],       #允许的版本
-    "VERSION_PARAM":'version',             #get方式url中参数的名字  ?version=xxxk
-    "DEFAULT_PARSER_CLASSES": ["rest_framework.parsers.JSONParser", "rest_framework.parsers.FormParser"],
+    "DEFAULT_VERSIONING_CLASS":
+    "rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_VERSION":
+    'v1',  #默认的版本
+    "ALLOWED_VERSIONS": [
+        'v1',
+    ],  #允许的版本
+    "VERSION_PARAM":
+    'version',  #get方式url中参数的名字  ?version=xxxk
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+        "rest_framework.parsers.FormParser",
+        "rest_framework.parsers.MultiPartParser"
+    ],
 }
 
 ROOT_URLCONF = 'jase_im.urls'
@@ -241,4 +256,4 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
-INTERNAL_IPS = ('127.0.0.1',)
+INTERNAL_IPS = ('127.0.0.1', )
