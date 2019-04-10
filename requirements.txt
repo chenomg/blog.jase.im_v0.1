@@ -9,3 +9,4 @@ django-google-analytics-app
 django-debug-toolbar
 djangorestframework
 django-filter
+django-xmlrpc
