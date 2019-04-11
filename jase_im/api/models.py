@@ -45,11 +45,13 @@ class ImageHostingModel(models.Model):
     def __str__(self):
         return self.title
 
+
 class UserType(models.Model):
     ADMIN = 0
     NORMAL = 1
     USER_TYPE = [(ADMIN, 'Admin'), (NORMAL, 'Normal')]
-    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, primary_key=True, on_delete=models.CASCADE)
     type = models.CharField(max_length=20, choices=USER_TYPE, default=NORMAL)
 
     def __str__(self):

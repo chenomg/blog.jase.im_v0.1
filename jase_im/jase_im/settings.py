@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dashboard',
     'ssl_verify',
+    'django_xmlrpc',
 ]
 
 MIDDLEWARE = [

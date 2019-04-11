@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""XML-RPC methods of Zinnia metaWeblog API"""
+"""XML-RPC methods for metaWeblog API"""
 from datetime import datetime
 from xmlrpc.client import DateTime
 from xmlrpc.client import Fault
 
+from django.contrib.auth import authenticate as authen
 from django.conf import settings
-from django.contrib.sites.models import Site
+# from django.contrib.sites.models import Site
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.template.defaultfilters import slugify
@@ -18,31 +19,29 @@ from django.utils.translation import gettext as _
 
 from django_xmlrpc.decorators import xmlrpc_func
 
-from tagging.models import Tag
+# from tagging.models import Tag
 
-from zinnia.managers import DRAFT, PUBLISHED
-from zinnia.models.author import Author
-from zinnia.models.category import Category
-from zinnia.models.entry import Entry
-from zinnia.settings import PROTOCOL
+from blog.models import Post
+# from zinnia.managers import DRAFT, PUBLISHED
+# from zinnia.models.author import Author
+# from zinnia.models.category import Category
+# from zinnia.models.entry import Entry
+# from zinnia.settings import PROTOCOL
 
 
 # http://docs.nucleuscms.org/blog/12#errorcodes
 LOGIN_ERROR = 801
 PERMISSION_DENIED = 803
+PROTOCOL = 'https'
 
 
 def authenticate(username, password, permission=None):
     """
     Authenticate staff_user with permission.
     """
-    try:
-        author = Author.objects.get(
-            **{'%s__exact' % Author.USERNAME_FIELD: username})
-    except Author.DoesNotExist:
-        raise Fault(LOGIN_ERROR, _('Username is incorrect.'))
-    if not author.check_password(password):
-        raise Fault(LOGIN_ERROR, _('Password is invalid.'))
+    author = authen(username=username, password=password)
+    if not author:
+        raise Fault(LOGIN_ERROR, _('Username or Password is incorrect.'))
     if not author.is_staff or not author.is_active:
         raise Fault(PERMISSION_DENIED, _('User account unavailable.'))
     if permission:
@@ -51,15 +50,16 @@ def authenticate(username, password, permission=None):
     return author
 
 
-def blog_structure(site):
+def blog_structure(blog):
     """
     A blog structure.
     """
-    return {'blogid': settings.SITE_ID,
-            'blogName': site.name,
-            'url': '%s://%s%s' % (
-                PROTOCOL, site.domain,
-                reverse('zinnia:entry_archive_index'))}
+    return {'blogid': blog.pk,
+            'blogName': blog.title,
+            }
+    # 'url': '%s://%s%s' % (
+    #     PROTOCOL, site.domain,
+    #     reverse('zinnia:entry_archive_index'))}
 
 
 def user_structure(user, site):
@@ -164,9 +164,9 @@ def get_users_blogs(apikey, username, password):
     blogger.getUsersBlogs(api_key, username, password)
     => blog structure[]
     """
-    authenticate(username, password)
-    site = Site.objects.get_current()
-    return [blog_structure(site)]
+    author = authenticate(username, password)
+    blogs = Post.objects.all()
+    return [blog_structure(blog) for blog in blogs]
 
 
 @xmlrpc_func(returns='struct', args=['string', 'string', 'string'])
@@ -330,6 +330,7 @@ def edit_post(post_id, username, password, post, publish):
     metaWeblog.editPost(post_id, username, password, post, publish)
     => boolean
     """
+    print('kkk')
     user = authenticate(username, password, 'zinnia.change_entry')
     entry = Entry.objects.get(id=post_id, authors=user)
     if post.get('dateCreated'):
@@ -380,6 +381,7 @@ def new_media_object(blog_id, username, password, media):
     metaWeblog.newMediaObject(blog_id, username, password, media)
     => media structure
     """
+    print('kkk')
     authenticate(username, password)
     path = default_storage.save(Entry().image_upload_to(media['name']),
                                 ContentFile(media['bits'].data))
