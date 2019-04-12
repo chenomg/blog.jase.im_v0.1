@@ -33,6 +33,9 @@ from blog.models import Post
 LOGIN_ERROR = 801
 PERMISSION_DENIED = 803
 PROTOCOL = 'https'
+DOMAIN = 'jase.im'
+BLOGNAME = 'Do It!'
+BLOGID = '0'
 
 
 def authenticate(username, password, permission=None):
@@ -50,16 +53,16 @@ def authenticate(username, password, permission=None):
     return author
 
 
-def blog_structure(blog):
+def blog_structure():
     """
     A blog structure.
     """
-    return {'blogid': blog.pk,
-            'blogName': blog.title,
+    return {'blogid': BLOGID,
+            'blogName': BLOGNAME,
+            'url': '{}://{}{}'.format(
+                PROTOCOL, DOMAIN,
+                reverse('blog:index'))
             }
-    # 'url': '%s://%s%s' % (
-    #     PROTOCOL, site.domain,
-    #     reverse('zinnia:entry_archive_index'))}
 
 
 def user_structure(user, site):
@@ -165,8 +168,8 @@ def get_users_blogs(apikey, username, password):
     => blog structure[]
     """
     author = authenticate(username, password)
-    blogs = Post.objects.all()
-    return [blog_structure(blog) for blog in blogs]
+    # blogs = Post.objects.all()
+    return [blog_structure()]
 
 
 @xmlrpc_func(returns='struct', args=['string', 'string', 'string'])
