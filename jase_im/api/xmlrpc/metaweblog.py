@@ -21,7 +21,7 @@ from django_xmlrpc.decorators import xmlrpc_func
 
 # from tagging.models import Tag
 
-from blog.models import Post
+from blog.models import Post, Category, Tag
 # from zinnia.managers import DRAFT, PUBLISHED
 # from zinnia.models.author import Author
 # from zinnia.models.category import Category
@@ -95,38 +95,31 @@ def author_structure(user):
             'user_email': user.email}
 
 
-def category_structure(category, site):
+def category_structure(category):
     """
     A category structure.
     """
-    return {'description': category.title,
-            'htmlUrl': '%s://%s%s' % (
-                PROTOCOL, site.domain,
-                category.get_absolute_url()),
-            'rssUrl': '%s://%s%s' % (
-                PROTOCOL, site.domain,
-                reverse('zinnia:category_feed', args=[category.tree_path])),
-            # Useful Wordpress Extensions
-            'categoryId': category.pk,
-            'parentId': category.parent and category.parent.pk or 0,
-            'categoryDescription': category.description,
-            'categoryName': category.title}
+    return {  # 'description': category.name,
+        'htmlUrl': '%s://%s%s' % (
+            PROTOCOL, DOMAIN,
+            reverse('blog:category')),
+        # Useful Wordpress Extensions
+        'categoryId': category.pk,
+        # 'categoryDescription': category.description,
+        'categoryName': category.name}
 
 
-def tag_structure(tag, site):
+def tag_structure(tag):
     """
     A tag structure.
     """
     return {'tag_id': tag.pk,
             'name': tag.name,
-            'count': tag.count,
-            'slug': tag.name,
+            # 'count': tag.count,
+            'slug': tag.slug,
             'html_url': '%s://%s%s' % (
-                PROTOCOL, site.domain,
-                reverse('zinnia:tag_detail', args=[tag.name])),
-            'rss_url': '%s://%s%s' % (
-                PROTOCOL, site.domain,
-                reverse('zinnia:tag_feed', args=[tag.name]))
+                PROTOCOL, DOMAIN,
+                reverse('blog:tag_show', args=[tag.slug])),
             }
 
 
@@ -167,8 +160,7 @@ def get_users_blogs(apikey, username, password):
     blogger.getUsersBlogs(api_key, username, password)
     => blog structure[]
     """
-    author = authenticate(username, password)
-    # blogs = Post.objects.all()
+    authenticate(username, password)
     return [blog_structure()]
 
 
@@ -251,9 +243,9 @@ def get_categories(blog_id, username, password):
     => category structure[]
     """
     authenticate(username, password)
-    site = Site.objects.get_current()
-    return [category_structure(category, site)
-            for category in Category.objects.all()]
+    categories = Category.objects.all()
+    return [category_structure(category)
+            for category in categories]
 
 
 @xmlrpc_func(returns='string', args=['string', 'string', 'string', 'struct'])
@@ -281,49 +273,32 @@ def new_post(blog_id, username, password, post, publish):
     metaWeblog.newPost(blog_id, username, password, post, publish)
     => post_id
     """
-    user = authenticate(username, password, 'zinnia.add_entry')
-    if post.get('dateCreated'):
-        creation_date = datetime.strptime(
-            post['dateCreated'].value[:18], '%Y-%m-%dT%H:%M:%S')
-        if settings.USE_TZ:
-            creation_date = timezone.make_aware(
-                creation_date, timezone.utc)
-    else:
-        creation_date = timezone.now()
-
-    entry_dict = {'title': post['title'],
-                  'content': post['description'],
-                  'excerpt': post.get('mt_excerpt', ''),
-                  'publication_date': creation_date,
-                  'creation_date': creation_date,
-                  'last_update': creation_date,
-                  'comment_enabled': post.get('mt_allow_comments', 1) == 1,
-                  'pingback_enabled': post.get('mt_allow_pings', 1) == 1,
-                  'trackback_enabled': post.get('mt_allow_pings', 1) == 1,
-                  'featured': post.get('sticky', 0) == 1,
-                  'tags': 'mt_keywords' in post and post['mt_keywords'] or '',
-                  'slug': 'wp_slug' in post and post['wp_slug'] or slugify(
-                      post['title']),
-                  'password': post.get('wp_password', '')}
-    if user.has_perm('zinnia.can_change_status'):
-        entry_dict['status'] = publish and PUBLISHED or DRAFT
-
-    entry = Entry.objects.create(**entry_dict)
-
-    author = user
-    if 'wp_author_id' in post and user.has_perm('zinnia.can_change_author'):
-        if int(post['wp_author_id']) != user.pk:
-            author = Author.objects.get(pk=post['wp_author_id'])
-    entry.authors.add(author)
-
-    entry.sites.add(Site.objects.get_current())
+    user = authenticate(username, password)
+    creation_date = timezone.now()
+    new_post = Post()
+    new_post.title = post['title']
+    new_post.content = post['description']
+    new_post.excerpt = post['description'][:300]
+    new_post.author = user
+    new_post.is_publish = True if post['post_status']=='publish' else False
+    if new_post.is_publish:
+        new_post.publish_content = new_post.content
+        new_post.publish_excerpt = new_post.excerpt
     if 'categories' in post:
-        entry.categories.add(*[
-            Category.objects.get_or_create(
-                title=cat, slug=slugify(cat))[0]
-            for cat in post['categories']])
-
-    return entry.pk
+        # 文章的类别只选择第一项
+        cat = post['categories'][0]
+        new_post.category = Category.objects.get(name=cat)
+    else:
+        new_post.category, _ = Category.objects.get_or_create(name='General')
+    print(new_post.category)
+    new_post.save()
+    # new_post.publish_excerpt = post['mt_excerpt']
+    if 'mt_keywords' in post and post['mt_keywords']:
+        ts = [i.strip() for i in post['mt_keywords'].split(',')]
+        for t in ts:
+            tag, _ = Tag.objects.get_or_create(name=t)
+            new_post.tags.add(tag)
+    return new_post.pk
 
 
 @xmlrpc_func(returns='boolean', args=['string', 'string', 'string',
@@ -384,8 +359,7 @@ def new_media_object(blog_id, username, password, media):
     metaWeblog.newMediaObject(blog_id, username, password, media)
     => media structure
     """
-    print('kkk')
-    authenticate(username, password)
-    path = default_storage.save(Entry().image_upload_to(media['name']),
-                                ContentFile(media['bits'].data))
-    return {'url': default_storage.url(path)}
+    # authenticate(username, password)
+    # path = default_storage.save(Entry().image_upload_to(media['name']),
+    #                             ContentFile(media['bits'].data))
+    return {'msg': '不支持图片上传，请使用图片链接'}

@@ -11,7 +11,9 @@
                     <a href="{% url 'blog:post_detail' post.slug  %}" >{{ post.title }}</a>
                 </h2>
                 <hr>
-                {{ post.publish_excerpt|safe }}
+                <div>
+                    {{ post.publish_excerpt|safe }}
+                </div>
                 <a href="{% url 'blog:post_detail' post.slug  %}" class="btn btn-info">Read More &rarr;</a>
             </div>
             <div class="card-footer text-muted">

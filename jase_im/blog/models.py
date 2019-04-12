@@ -18,6 +18,7 @@ def gene_rand_code(digital=8):
 
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
+    description = models.TextField(blank=True)
     slug = models.SlugField(unique=True, blank=True)
     created_time = models.DateTimeField(auto_now_add=True)
 
