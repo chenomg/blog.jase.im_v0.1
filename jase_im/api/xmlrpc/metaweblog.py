@@ -123,35 +123,36 @@ def tag_structure(tag):
             }
 
 
-def post_structure(entry, site):
+def post_structure(entry):
     """
     A post structure with extensions.
     """
-    author = entry.authors.all()[0]
+    author = entry.author
     return {'title': entry.title,
-            'description': six.text_type(entry.html_content),
-            'link': '%s://%s%s' % (PROTOCOL, site.domain,
-                                   entry.get_absolute_url()),
+            'description': entry.content,
+            'link': '%s://%s%s' % (PROTOCOL, DOMAIN,
+                                   reverse('blog:post_detail', kwargs={'slug':entry.slug})),
             # Basic Extensions
-            'permaLink': '%s://%s%s' % (PROTOCOL, site.domain,
-                                        entry.get_absolute_url()),
-            'categories': [cat.title for cat in entry.categories.all()],
-            'dateCreated': DateTime(entry.creation_date.isoformat()),
+            # 'permaLink': '%s://%s%s' % (PROTOCOL, site.domain,
+                                        # entry.get_absolute_url()),
+            'categories': entry.category,
+            'dateCreated': DateTime(entry.created_time.isoformat()),
             'postid': entry.pk,
-            'userid': author.get_username(),
+            # 'userid': author.get_username(),
+            'userid': author.pk,
             # Useful Movable Type Extensions
             'mt_excerpt': entry.excerpt,
-            'mt_allow_comments': int(entry.comment_enabled),
-            'mt_allow_pings': (int(entry.pingback_enabled) or
-                               int(entry.trackback_enabled)),
+            # 'mt_allow_comments': int(entry.comment_enabled),
+            # 'mt_allow_pings': (int(entry.pingback_enabled) or
+                               # int(entry.trackback_enabled)),
             'mt_keywords': entry.tags,
             # Useful Wordpress Extensions
-            'wp_author': author.get_username(),
+            'wp_author': author.username,
             'wp_author_id': author.pk,
             'wp_author_display_name': author.__str__(),
-            'wp_password': entry.password,
             'wp_slug': entry.slug,
-            'sticky': entry.featured}
+            # 'sticky': entry.featured}
+    }
 
 
 @xmlrpc_func(returns='struct[]', args=['string', 'string', 'string'])
@@ -206,8 +207,8 @@ def get_post(post_id, username, password):
     => post structure
     """
     user = authenticate(username, password)
-    site = Site.objects.get_current()
-    return post_structure(Entry.objects.get(id=post_id, authors=user), site)
+    # site = Site.objects.get_current()
+    return post_structure(Post.objects.filter(id=post_id)[0])
 
 
 @xmlrpc_func(returns='struct[]',
@@ -284,13 +285,12 @@ def new_post(blog_id, username, password, post, publish):
     if new_post.is_publish:
         new_post.publish_content = new_post.content
         new_post.publish_excerpt = new_post.excerpt
-    if 'categories' in post:
+    if 'categories' in post and post['categories']:
         # 文章的类别只选择第一项
         cat = post['categories'][0]
         new_post.category = Category.objects.get(name=cat)
     else:
-        new_post.category, _ = Category.objects.get_or_create(name='General')
-    print(new_post.category)
+        new_post.category, _ = Category.objects.get_or_create(name='未分类')
     new_post.save()
     # new_post.publish_excerpt = post['mt_excerpt']
     if 'mt_keywords' in post and post['mt_keywords']:
@@ -308,48 +308,51 @@ def edit_post(post_id, username, password, post, publish):
     metaWeblog.editPost(post_id, username, password, post, publish)
     => boolean
     """
-    print('kkk')
-    user = authenticate(username, password, 'zinnia.change_entry')
-    entry = Entry.objects.get(id=post_id, authors=user)
-    if post.get('dateCreated'):
-        creation_date = datetime.strptime(
-            post['dateCreated'].value[:18], '%Y-%m-%dT%H:%M:%S')
-        if settings.USE_TZ:
-            creation_date = timezone.make_aware(
-                creation_date, timezone.utc)
-    else:
-        creation_date = entry.creation_date
-
-    entry.title = post['title']
-    entry.content = post['description']
-    entry.excerpt = post.get('mt_excerpt', '')
-    entry.publication_date = creation_date
-    entry.creation_date = creation_date
-    entry.last_update = timezone.now()
-    entry.comment_enabled = post.get('mt_allow_comments', 1) == 1
-    entry.pingback_enabled = post.get('mt_allow_pings', 1) == 1
-    entry.trackback_enabled = post.get('mt_allow_pings', 1) == 1
-    entry.featured = post.get('sticky', 0) == 1
-    entry.tags = 'mt_keywords' in post and post['mt_keywords'] or ''
-    entry.slug = 'wp_slug' in post and post['wp_slug'] or slugify(
-        post['title'])
-    if user.has_perm('zinnia.can_change_status'):
-        entry.status = publish and PUBLISHED or DRAFT
-    entry.password = post.get('wp_password', '')
-    entry.save()
-
-    if 'wp_author_id' in post and user.has_perm('zinnia.can_change_author'):
+    user = authenticate(username, password)
+    post = Post.objects.get(id=post_id, authors=user)
+    if 'wp_author_id' in post:
         if int(post['wp_author_id']) != user.pk:
-            author = Author.objects.get(pk=post['wp_author_id'])
-            entry.authors.clear()
-            entry.authors.add(author)
+            return False
 
-    if 'categories' in post:
-        entry.categories.clear()
-        entry.categories.add(*[
-            Category.objects.get_or_create(
-                title=cat, slug=slugify(cat))[0]
-            for cat in post['categories']])
+    post.title = post['title']
+    post.content = post['description']
+    post.excerpt = post.get('mt_excerpt', '')
+    # entry.comment_enabled = post.get('mt_allow_comments', 1) == 1
+    # entry.pingback_enabled = post.get('mt_allow_pings', 1) == 1
+    # entry.trackback_enabled = post.get('mt_allow_pings', 1) == 1
+    # entry.featured = post.get('sticky', 0) == 1
+    post.is_publish = True if post['post_status']=='publish' else False
+    if post.is_publish:
+        post.publish_content = post.content
+        post.publish_excerpt = post.excerpt
+    if 'categories' in post and post['categories']:
+        # 文章的类别只选择第一项
+        cat = post['categories'][0]
+        post.category = Category.objects.get(name=cat)
+    else:
+        post.category, _ = Category.objects.get_or_create(name='未分类')
+    post.save()
+    # new_post.publish_excerpt = post['mt_excerpt']
+    if 'mt_keywords' in post and post['mt_keywords']:
+        ts = [i.strip() for i in post['mt_keywords'].split(',')]
+        for t in ts:
+            tag, _ = Tag.objects.get_or_create(name=t)
+            post.tags.add(tag)
+    # entry.tags = 'mt_keywords' in post and post['mt_keywords'] or ''
+    # entry.slug = 'wp_slug' in post and post['wp_slug'] or slugify(
+        # post['title'])
+    # if user.has_perm('zinnia.can_change_status'):
+        # entry.status = publish and PUBLISHED or DRAFT
+    # entry.password = post.get('wp_password', '')
+    # entry.save()
+
+
+    # if 'categories' in post:
+        # entry.categories.clear()
+        # entry.categories.add(*[
+            # Category.objects.get_or_create(
+                # title=cat, slug=slugify(cat))[0]
+            # for cat in post['categories']])
     return True
 
 
