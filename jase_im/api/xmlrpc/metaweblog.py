@@ -145,12 +145,12 @@ def post_structure(entry):
             # 'mt_allow_comments': int(entry.comment_enabled),
             # 'mt_allow_pings': (int(entry.pingback_enabled) or
                                # int(entry.trackback_enabled)),
-            'mt_keywords': entry.tags,
+            'mt_keywords': ', '.join([tag.name for tag in entry.tags.all()]),
             # Useful Wordpress Extensions
             'wp_author': author.username,
             'wp_author_id': author.pk,
             'wp_author_display_name': author.__str__(),
-            'wp_slug': entry.slug,
+            'wp_slug': entry.slug
             # 'sticky': entry.featured}
     }
 
@@ -208,7 +208,8 @@ def get_post(post_id, username, password):
     """
     user = authenticate(username, password)
     # site = Site.objects.get_current()
-    return post_structure(Post.objects.filter(id=post_id)[0])
+    post = Post.objects.get(id=post_id)
+    return post_structure(post)
 
 
 @xmlrpc_func(returns='struct[]',
@@ -309,35 +310,35 @@ def edit_post(post_id, username, password, post, publish):
     => boolean
     """
     user = authenticate(username, password)
-    post = Post.objects.get(id=post_id, authors=user)
+    entry = Post.objects.get(id=post_id, author=user)
     if 'wp_author_id' in post:
         if int(post['wp_author_id']) != user.pk:
             return False
 
-    post.title = post['title']
-    post.content = post['description']
-    post.excerpt = post.get('mt_excerpt', '')
+    entry.title = post['title']
+    entry.content = post['description']
+    entry.excerpt = post.get('mt_excerpt', '')
     # entry.comment_enabled = post.get('mt_allow_comments', 1) == 1
     # entry.pingback_enabled = post.get('mt_allow_pings', 1) == 1
     # entry.trackback_enabled = post.get('mt_allow_pings', 1) == 1
     # entry.featured = post.get('sticky', 0) == 1
-    post.is_publish = True if post['post_status']=='publish' else False
-    if post.is_publish:
-        post.publish_content = post.content
-        post.publish_excerpt = post.excerpt
+    entry.is_publish = True if post['post_status']=='publish' else False
+    if entry.is_publish:
+        entry.publish_content = entry.content
+        entry.publish_excerpt = entry.excerpt
     if 'categories' in post and post['categories']:
         # 文章的类别只选择第一项
         cat = post['categories'][0]
-        post.category = Category.objects.get(name=cat)
+        entry.category = Category.objects.get(name=cat)
     else:
-        post.category, _ = Category.objects.get_or_create(name='未分类')
-    post.save()
+        entry.category, _ = Category.objects.get_or_create(name='未分类')
+    entry.save()
     # new_post.publish_excerpt = post['mt_excerpt']
     if 'mt_keywords' in post and post['mt_keywords']:
         ts = [i.strip() for i in post['mt_keywords'].split(',')]
         for t in ts:
             tag, _ = Tag.objects.get_or_create(name=t)
-            post.tags.add(tag)
+            entry.tags.add(tag)
     # entry.tags = 'mt_keywords' in post and post['mt_keywords'] or ''
     # entry.slug = 'wp_slug' in post and post['wp_slug'] or slugify(
         # post['title'])
