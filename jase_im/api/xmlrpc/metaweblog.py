@@ -17,17 +17,9 @@ from django.urls import reverse
 # from django.utils import six
 # from django.utils import timezone
 from django.utils.translation import gettext as _
-
 from django_xmlrpc.decorators import xmlrpc_func
 
-# from tagging.models import Tag
-
 from blog.models import Post, Category, Tag
-# from zinnia.managers import DRAFT, PUBLISHED
-# from zinnia.models.author import Author
-# from zinnia.models.category import Category
-# from zinnia.models.entry import Entry
-# from zinnia.settings import PROTOCOL
 
 
 # http://docs.nucleuscms.org/blog/12#errorcodes
@@ -106,7 +98,7 @@ def category_structure(category):
             reverse('blog:category')),
         # Useful Wordpress Extensions
         'categoryId': category.pk,
-        # 'categoryDescription': category.description,
+        'categoryDescription': category.description,
         'categoryName': category.name}
 
 
@@ -139,7 +131,6 @@ def post_structure(entry):
             'categories': entry.category,
             'dateCreated': DateTime(entry.created_time.isoformat()),
             'postid': entry.pk,
-            # 'userid': author.get_username(),
             'userid': author.pk,
             # Useful Movable Type Extensions
             'mt_excerpt': entry.excerpt,
@@ -173,7 +164,6 @@ def get_user_info(apikey, username, password):
     => user structure
     """
     user = authenticate(username, password)
-    # site = Site.objects.get_current()
     return user_structure(user)
 
 
@@ -208,7 +198,6 @@ def get_post(post_id, username, password):
     => post structure
     """
     authenticate(username, password)
-    # site = Site.objects.get_current()
     post = Post.objects.get(id=post_id)
     return post_structure(post)
 
@@ -221,7 +210,6 @@ def get_recent_posts(blog_id, username, password, number):
     => post structure[]
     """
     user = authenticate(username, password)
-    # site = Site.objects.get_current()
     return [post_structure(entry)
             for entry in Post.objects.filter(author=user)[:number]]
 
@@ -233,7 +221,6 @@ def get_tags(blog_id, username, password):
     => tag structure[]
     """
     authenticate(username, password)
-    # site = Site.objects.get_current()
     return [tag_structure(tag)
             for tag in Tag.objects.usage_for_queryset(
                 Post.is_publish.all(), counts=True)]
@@ -261,10 +248,6 @@ def new_category(blog_id, username, password, category_struct):
     category_dict = {'title': category_struct['name'],
                      'description': category_struct['description'],
                     }
-                     # 'slug': category_struct['slug']}
-    # if int(category_struct['parent_id']):
-        # category_dict['parent'] = Category.objects.get(
-            # pk=category_struct['parent_id'])
     category = Category.objects.create(**category_dict)
 
     return category.pk
@@ -294,7 +277,6 @@ def new_post(blog_id, username, password, post, publish):
     else:
         entry.category, _ = Category.objects.get_or_create(name='未分类')
     entry.save()
-    # new_post.publish_excerpt = post['mt_excerpt']
     if 'mt_keywords' in post and post['mt_keywords']:
         ts = [i.strip() for i in post['mt_keywords'].split(',')]
         for t in ts:
@@ -319,10 +301,6 @@ def edit_post(post_id, username, password, post, publish):
     entry.title = post['title']
     entry.content = post['description']
     entry.excerpt = post.get('mt_excerpt', '')
-    # entry.comment_enabled = post.get('mt_allow_comments', 1) == 1
-    # entry.pingback_enabled = post.get('mt_allow_pings', 1) == 1
-    # entry.trackback_enabled = post.get('mt_allow_pings', 1) == 1
-    # entry.featured = post.get('sticky', 0) == 1
 
     publish_now = post.get('post_status')=='publish' or publish
     if publish_now:
@@ -336,28 +314,12 @@ def edit_post(post_id, username, password, post, publish):
     else:
         entry.category, _ = Category.objects.get_or_create(name='未分类')
     entry.save()
-    # new_post.publish_excerpt = post['mt_excerpt']
     if 'mt_keywords' in post and post['mt_keywords']:
         ts = [i.strip() for i in post['mt_keywords'].split(',')]
         entry.tags.clear()
         for t in ts:
             tag, _ = Tag.objects.get_or_create(name=t)
             entry.tags.add(tag)
-    # entry.tags = 'mt_keywords' in post and post['mt_keywords'] or ''
-    # entry.slug = 'wp_slug' in post and post['wp_slug'] or slugify(
-        # post['title'])
-    # if user.has_perm('zinnia.can_change_status'):
-        # entry.status = publish and PUBLISHED or DRAFT
-    # entry.password = post.get('wp_password', '')
-    # entry.save()
-
-
-    # if 'categories' in post:
-        # entry.categories.clear()
-        # entry.categories.add(*[
-            # Category.objects.get_or_create(
-                # title=cat, slug=slugify(cat))[0]
-            # for cat in post['categories']])
     return True
 
 
