@@ -223,7 +223,7 @@ def get_recent_posts(blog_id, username, password, number):
     user = authenticate(username, password)
     # site = Site.objects.get_current()
     return [post_structure(entry)
-            for entry in Post.objects.filter(authors=user)[:number]]
+            for entry in Post.objects.filter(author=user)[:number]]
 
 
 @xmlrpc_func(returns='struct[]', args=['string', 'string', 'string'])
@@ -283,7 +283,7 @@ def new_post(blog_id, username, password, post, publish):
     entry.content = post['description']
     entry.excerpt = post['description'][:300]
     entry.author = user
-    entry.is_publish = True if post['post_status']=='publish' else False
+    entry.is_publish = True if post.get('post_status')=='publish' or publish else False
     if entry.is_publish:
         entry.publish_content = entry.content
         entry.publish_excerpt = entry.excerpt
@@ -323,8 +323,10 @@ def edit_post(post_id, username, password, post, publish):
     # entry.pingback_enabled = post.get('mt_allow_pings', 1) == 1
     # entry.trackback_enabled = post.get('mt_allow_pings', 1) == 1
     # entry.featured = post.get('sticky', 0) == 1
-    entry.is_publish = True if post['post_status']=='publish' else False
-    if entry.is_publish:
+
+    publish_now = post.get('post_status')=='publish' or publish
+    if publish_now:
+        entry.is_publish = True
         entry.publish_content = entry.content
         entry.publish_excerpt = entry.excerpt
     if 'categories' in post and post['categories']:
