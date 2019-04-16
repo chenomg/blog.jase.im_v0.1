@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dashboard',
     'ssl_verify',
+    'django_xmlrpc',
 ]
 
 MIDDLEWARE = [
@@ -93,8 +94,8 @@ REST_FRAMEWORK = {
         'api.utils.throttle.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'AnonymousUser': '5/m',
-        'NormalUser': '10/m',
+        'AnonymousUser': '50/m',
+        'NormalUser': '100/m',
     },
     # 设置代理数量
     # 'NUM_PROXIES': 1,
