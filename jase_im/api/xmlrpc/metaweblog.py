@@ -339,6 +339,7 @@ def edit_post(post_id, username, password, post, publish):
     # new_post.publish_excerpt = post['mt_excerpt']
     if 'mt_keywords' in post and post['mt_keywords']:
         ts = [i.strip() for i in post['mt_keywords'].split(',')]
+        entry.tags.clear()
         for t in ts:
             tag, _ = Tag.objects.get_or_create(name=t)
             entry.tags.add(tag)
