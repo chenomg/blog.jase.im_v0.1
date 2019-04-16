@@ -3,6 +3,8 @@
 jase_im/media/
 jase_im/.idea/
 jase_im/logs/
+jase_im/blog/migrations/
+*/migrations/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
