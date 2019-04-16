@@ -2,19 +2,20 @@
 # -*- coding: utf-8 -*-
 
 """XML-RPC methods for metaWeblog API"""
-from datetime import datetime
+# from datetime import datetime
 from xmlrpc.client import DateTime
 from xmlrpc.client import Fault
 
 from django.contrib.auth import authenticate as authen
-from django.conf import settings
+# from django.conf import settings
+from django.contrib.auth.models import User
 # from django.contrib.sites.models import Site
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
-from django.template.defaultfilters import slugify
+# from django.core.files.base import ContentFile
+# from django.core.files.storage import default_storage
+# from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.utils import six
-from django.utils import timezone
+# from django.utils import six
+# from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from django_xmlrpc.decorators import xmlrpc_func
@@ -65,7 +66,7 @@ def blog_structure():
             }
 
 
-def user_structure(user, site):
+def user_structure(user):
     """
     An user structure.
     """
@@ -81,7 +82,7 @@ def user_structure(user, site):
             'lastname': last_name,
             'firstname': first_name,
             'url': '%s://%s%s' % (
-                PROTOCOL, site.domain,
+                PROTOCOL, DOMAIN,
                 user.get_absolute_url())}
 
 
@@ -172,8 +173,8 @@ def get_user_info(apikey, username, password):
     => user structure
     """
     user = authenticate(username, password)
-    site = Site.objects.get_current()
-    return user_structure(user, site)
+    # site = Site.objects.get_current()
+    return user_structure(user)
 
 
 @xmlrpc_func(returns='struct[]', args=['string', 'string', 'string'])
@@ -184,7 +185,7 @@ def get_authors(apikey, username, password):
     """
     authenticate(username, password)
     return [author_structure(author)
-            for author in Author.objects.filter(is_staff=True)]
+            for author in User.objects.filter(is_staff=True)]
 
 
 @xmlrpc_func(returns='boolean', args=['string', 'string',
@@ -194,8 +195,8 @@ def delete_post(apikey, post_id, username, password, publish):
     blogger.deletePost(api_key, post_id, username, password, 'publish')
     => boolean
     """
-    user = authenticate(username, password, 'zinnia.delete_entry')
-    entry = Entry.objects.get(id=post_id, authors=user)
+    user = authenticate(username, password)
+    entry = Post.objects.get(id=post_id, author=user)
     entry.delete()
     return True
 
@@ -206,7 +207,7 @@ def get_post(post_id, username, password):
     metaWeblog.getPost(post_id, username, password)
     => post structure
     """
-    user = authenticate(username, password)
+    authenticate(username, password)
     # site = Site.objects.get_current()
     post = Post.objects.get(id=post_id)
     return post_structure(post)
@@ -220,9 +221,9 @@ def get_recent_posts(blog_id, username, password, number):
     => post structure[]
     """
     user = authenticate(username, password)
-    site = Site.objects.get_current()
-    return [post_structure(entry, site)
-            for entry in Entry.objects.filter(authors=user)[:number]]
+    # site = Site.objects.get_current()
+    return [post_structure(entry)
+            for entry in Post.objects.filter(authors=user)[:number]]
 
 
 @xmlrpc_func(returns='struct[]', args=['string', 'string', 'string'])
@@ -232,10 +233,10 @@ def get_tags(blog_id, username, password):
     => tag structure[]
     """
     authenticate(username, password)
-    site = Site.objects.get_current()
-    return [tag_structure(tag, site)
+    # site = Site.objects.get_current()
+    return [tag_structure(tag)
             for tag in Tag.objects.usage_for_queryset(
-                Entry.published.all(), counts=True)]
+                Post.is_publish.all(), counts=True)]
 
 
 @xmlrpc_func(returns='struct[]', args=['string', 'string', 'string'])
@@ -256,13 +257,14 @@ def new_category(blog_id, username, password, category_struct):
     wp.newCategory(blog_id, username, password, category)
     => category_id
     """
-    authenticate(username, password, 'zinnia.add_category')
+    authenticate(username, password)
     category_dict = {'title': category_struct['name'],
                      'description': category_struct['description'],
-                     'slug': category_struct['slug']}
-    if int(category_struct['parent_id']):
-        category_dict['parent'] = Category.objects.get(
-            pk=category_struct['parent_id'])
+                    }
+                     # 'slug': category_struct['slug']}
+    # if int(category_struct['parent_id']):
+        # category_dict['parent'] = Category.objects.get(
+            # pk=category_struct['parent_id'])
     category = Category.objects.create(**category_dict)
 
     return category.pk
@@ -276,30 +278,29 @@ def new_post(blog_id, username, password, post, publish):
     => post_id
     """
     user = authenticate(username, password)
-    creation_date = timezone.now()
-    new_post = Post()
-    new_post.title = post['title']
-    new_post.content = post['description']
-    new_post.excerpt = post['description'][:300]
-    new_post.author = user
-    new_post.is_publish = True if post['post_status']=='publish' else False
-    if new_post.is_publish:
-        new_post.publish_content = new_post.content
-        new_post.publish_excerpt = new_post.excerpt
+    entry = Post()
+    entry.title = post['title']
+    entry.content = post['description']
+    entry.excerpt = post['description'][:300]
+    entry.author = user
+    entry.is_publish = True if post['post_status']=='publish' else False
+    if entry.is_publish:
+        entry.publish_content = entry.content
+        entry.publish_excerpt = entry.excerpt
     if 'categories' in post and post['categories']:
         # 文章的类别只选择第一项
         cat = post['categories'][0]
-        new_post.category = Category.objects.get(name=cat)
+        entry.category = Category.objects.get(name=cat)
     else:
-        new_post.category, _ = Category.objects.get_or_create(name='未分类')
-    new_post.save()
+        entry.category, _ = Category.objects.get_or_create(name='未分类')
+    entry.save()
     # new_post.publish_excerpt = post['mt_excerpt']
     if 'mt_keywords' in post and post['mt_keywords']:
         ts = [i.strip() for i in post['mt_keywords'].split(',')]
         for t in ts:
             tag, _ = Tag.objects.get_or_create(name=t)
-            new_post.tags.add(tag)
-    return new_post.pk
+            entry.tags.add(tag)
+    return entry.pk
 
 
 @xmlrpc_func(returns='boolean', args=['string', 'string', 'string',
