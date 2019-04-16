@@ -264,7 +264,7 @@ def new_post(blog_id, username, password, post, publish):
     entry = Post()
     entry.title = post['title']
     entry.content = post['description']
-    entry.excerpt = post['description'][:300]
+    entry.excerpt = post['description'][:300] + '...'
     entry.author = user
     entry.is_publish = True if post.get('post_status')=='publish' or publish else False
     if entry.is_publish:
@@ -300,7 +300,7 @@ def edit_post(post_id, username, password, post, publish):
 
     entry.title = post['title']
     entry.content = post['description']
-    entry.excerpt = post.get('mt_excerpt', '')
+    entry.excerpt = post['description'][:300] + '...'
 
     publish_now = post.get('post_status')=='publish' or publish
     if publish_now:
