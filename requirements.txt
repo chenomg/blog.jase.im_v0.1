@@ -10,3 +10,4 @@ django-debug-toolbar
 djangorestframework
 django-filter
 django-xmlrpc
+paramiko
