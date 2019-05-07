@@ -20,12 +20,14 @@ from django.contrib import admin
 from blog import views
 from django.conf import settings
 from django.views.static import serve
+import xadmin
 
 handler404 = views.page_not_found
 urlpatterns = [
     # url(r'^$', RedirectView.as_view(url='/blog/')),
     url(r'^$', include('homepage.urls'), name='homepage'),
     url(r'^admin/', admin.site.urls),
+    url(r'^xadmin/', xadmin.site.urls),
     url(r'^blog/', include('blog.urls')),
     url(r'^dashboard/', include('dashboard.urls')),
     url(r'^mdeditor/', include('mdeditor.urls')),

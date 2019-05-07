@@ -1,5 +1,6 @@
 from django.contrib import admin
 from blog.models import Category, Tag, Post, Page, Comment, UserProfile
+import xadmin
 
 
 class PostInline(admin.TabularInline):

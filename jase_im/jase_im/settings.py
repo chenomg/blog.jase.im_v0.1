@@ -31,7 +31,7 @@ DJANGO_STATIC = os.path.join(
 SECRET_KEY = 'y+o(b=flohs@l67vmw06om4xxka2p6!ee8be*pz$%+y#2x16b4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '.jase.im',
@@ -61,6 +61,8 @@ INSTALLED_APPS = [
     'dashboard',
     'ssl_verify',
     'django_xmlrpc',
+    'xadmin',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
