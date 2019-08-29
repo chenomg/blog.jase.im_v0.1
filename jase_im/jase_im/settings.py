@@ -34,7 +34,8 @@ SECRET_KEY = 'y+o(b=flohs@l67vmw06om4xxka2p6!ee8be*pz$%+y#2x16b4'
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '.jase.im',
+    'www.jase.im',
+    'jase.im',
     '127.0.0.1',
     'localhost',
 ]
