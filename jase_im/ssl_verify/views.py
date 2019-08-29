@@ -15,4 +15,5 @@ def ssl_verify(request, code):
         file_open = open(file_path, 'rb').read()
     logging.info('file_path: {}, file_content: {}'.format(
         file_path, file_open))
-    return HttpResponse(file_open)
+    # return HttpResponse(file_open)
+    return HttpResponse(code)
