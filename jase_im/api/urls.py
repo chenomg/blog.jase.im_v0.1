@@ -30,5 +30,5 @@ urlpatterns = [
     url(r'^(?P<version>(v1))/parser/', parsers.Parser.as_view(), name='parser'),
     url(r'^(?P<version>(v1))/bing-daily-wallpaper/', wallpaper.Bing_Daily_Wallpaper.as_view(), name='bing_wallpaper'),
     url(r'^metaweblog/', handle_xmlrpc, name='metaweblog'),
-    url(r'^(?P<version>(v1))/ip/v4/', ip.Request_IPv4.as_view(), name='ipv4'),
+    url(r'^(?P<version>(v1))/ip/v4', ip.Request_IPv4.as_view(), name='ipv4'),
 ]
