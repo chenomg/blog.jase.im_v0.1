@@ -17,7 +17,7 @@ from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 from django_xmlrpc.views import handle_xmlrpc
 
-from api.views import images, auth, parsers, wallpaper
+from api.views import images, auth, parsers, wallpaper, ip
 
 router = DefaultRouter()
 
@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^(?P<version>(v1))/parser/', parsers.Parser.as_view(), name='parser'),
     url(r'^(?P<version>(v1))/bing-daily-wallpaper/', wallpaper.Bing_Daily_Wallpaper.as_view(), name='bing_wallpaper'),
     url(r'^metaweblog/', handle_xmlrpc, name='metaweblog'),
+    url(r'^(?P<version>(v1))/ip/v4/', ip.Request_IPv4.as_view(), name='ipv4'),
 ]
